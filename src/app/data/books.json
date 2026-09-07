@@ -1,0 +1,2806 @@
+[
+ {
+  "id": "zov",
+  "title": "Zov divljine",
+  "author": "Jack London",
+  "pages": 120,
+  "read": true,
+  "tags": [
+   "divljina",
+   "preživljavanje",
+   "životinje",
+   "klasik",
+   "Aljaska"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "ocnjak",
+  "title": "Bijeli očnjak",
+  "author": "Jack London",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "divljina",
+   "životinje",
+   "klasik",
+   "Aljaska"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "starac",
+  "title": "Starac i more",
+  "author": "Ernest Hemingway",
+  "pages": 100,
+  "read": true,
+  "tags": [
+   "more",
+   "izdržljivost",
+   "klasik",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "noc",
+  "title": "Noćni let",
+  "author": "A. de Saint-Exupéry",
+  "pages": 100,
+  "read": false,
+  "tags": [
+   "letenje",
+   "izdržljivost",
+   "klasik",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "zemlja",
+  "title": "Zemlja ljudi",
+  "author": "A. de Saint-Exupéry",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "letenje",
+   "pustinja",
+   "istinita priča",
+   "izdržljivost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "srce",
+  "title": "Srce tame",
+  "author": "Joseph Conrad",
+  "pages": 110,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "ekspedicija",
+   "klasik",
+   "mračno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "izgub",
+  "title": "Izgubljeni svijet",
+  "author": "A. Conan Doyle",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "ekspedicija",
+   "avantura",
+   "klasik",
+   "znanost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "otok",
+  "title": "Otok s blagom",
+  "author": "R. L. Stevenson",
+  "pages": 200,
+  "read": true,
+  "tags": [
+   "more",
+   "pirati",
+   "klasik",
+   "avantura"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "cesta",
+  "title": "Cesta",
+  "author": "Cormac McCarthy",
+  "pages": 230,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "preživljavanje",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "void",
+  "title": "Touching the Void",
+  "author": "Joe Simpson",
+  "pages": 210,
+  "read": false,
+  "tags": [
+   "planine",
+   "preživljavanje",
+   "istinita priča",
+   "izdržljivost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "wild",
+  "title": "Into the Wild",
+  "author": "Jon Krakauer",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "divljina",
+   "Aljaska",
+   "istinita priča",
+   "moderno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "thin",
+  "title": "Into Thin Air",
+  "author": "Jon Krakauer",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "planine",
+   "ekspedicija",
+   "istinita priča",
+   "moderno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "endur",
+  "title": "Endurance",
+  "author": "Alfred Lansing",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "led",
+   "ekspedicija",
+   "istinita priča",
+   "preživljavanje",
+   "more"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "sredis",
+  "title": "Put u središte Zemlje",
+  "author": "Jules Verne",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "ekspedicija",
+   "klasik",
+   "znanost",
+   "avantura"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "deliv",
+  "title": "Izbavljenje",
+  "author": "James Dickey",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "preživljavanje",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "heart",
+  "title": "In the Heart of the Sea",
+  "author": "N. Philbrick",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "more",
+   "istinita priča",
+   "preživljavanje",
+   "brodolom"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "kontiki",
+  "title": "Kon-Tiki",
+  "author": "Thor Heyerdahl",
+  "pages": 240,
+  "read": false,
+  "tags": [
+   "more",
+   "ekspedicija",
+   "istinita priča",
+   "splav"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "slocum",
+  "title": "Sam oko svijeta",
+  "author": "Joshua Slocum",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "more",
+   "sam protiv prirode",
+   "istinita priča",
+   "jedrenje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "storm",
+  "title": "Savršena oluja",
+  "author": "Sebastian Junger",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "more",
+   "istinita priča",
+   "oluja",
+   "brodolom"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "moby",
+  "title": "Moby Dick",
+  "author": "Herman Melville",
+  "pages": 600,
+  "read": false,
+  "tags": [
+   "more",
+   "klasik",
+   "kitolov",
+   "mračno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "crusoe",
+  "title": "Robinson Crusoe",
+  "author": "Daniel Defoe",
+  "pages": 320,
+  "read": false,
+  "tags": [
+   "more",
+   "preživljavanje",
+   "klasik",
+   "otok"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "pijev",
+  "title": "Pijev život",
+  "author": "Yann Martel",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "more",
+   "preživljavanje",
+   "brodolom",
+   "moderno",
+   "otok"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "muhe",
+  "title": "Gospodar muha",
+  "author": "William Golding",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "otok",
+   "preživljavanje",
+   "mračno",
+   "klasik"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "worst",
+  "title": "The Worst Journey in the World",
+  "author": "A. Cherry-Garrard",
+  "pages": 600,
+  "read": false,
+  "tags": [
+   "led",
+   "ekspedicija",
+   "istinita priča",
+   "Antarktika"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "annap",
+  "title": "Annapurna",
+  "author": "Maurice Herzog",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "planine",
+   "ekspedicija",
+   "istinita priča",
+   "izdržljivost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "leopard",
+  "title": "Snježni leopard",
+  "author": "P. Matthiessen",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "planine",
+   "putovanje",
+   "istinita priča",
+   "meditativno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "sands",
+  "title": "Arabian Sands",
+  "author": "Wilfred Thesiger",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "pustinja",
+   "putovanje",
+   "istinita priča",
+   "izdržljivost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "gifts",
+  "title": "Vrijeme darova",
+  "author": "P. Leigh Fermor",
+  "pages": 280,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "pješačenje",
+   "istinita priča",
+   "Europa"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "doubt",
+  "title": "The River of Doubt",
+  "author": "Candice Millard",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "ekspedicija",
+   "istinita priča",
+   "džungla"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "dersu",
+  "title": "Dersu Uzala",
+  "author": "V. Arsenjev",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "divljina",
+   "tajga",
+   "istinita priča",
+   "putovanje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "camac",
+  "title": "Tri čovjeka u čamcu",
+  "author": "Jerome K. Jerome",
+  "pages": 180,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "klasik",
+   "humor",
+   "putovanje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "mars",
+  "title": "Marsovac",
+  "author": "Andy Weir",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "preživljavanje",
+   "znanost",
+   "moderno",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "zeta",
+  "title": "Izgubljeni grad Z",
+  "author": "David Grann",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "ekspedicija",
+   "džungla",
+   "istinita priča",
+   "istraga",
+   "nestanak"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "smilla",
+  "title": "Smillin osjećaj za snijeg",
+  "author": "Peter Høeg",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "led",
+   "misterij",
+   "istraga",
+   "nordic noir",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "hladno",
+  "title": "Hladnokrvno",
+  "author": "Truman Capote",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "zločin",
+   "istinita priča",
+   "novinarska istraga",
+   "suđenje"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "baskerv",
+  "title": "Baskervilleski pas",
+  "author": "A. Conan Doyle",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "misterij",
+   "istraga",
+   "klasik",
+   "magla"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "rebecca",
+  "title": "Rebecca",
+  "author": "Daphne du Maurier",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "misterij",
+   "more",
+   "mračno",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "nijedan",
+  "title": "I ne osta nijedan",
+  "author": "Agatha Christie",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "misterij",
+   "otok",
+   "zločin",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "sokol",
+  "title": "Malteški sokol",
+  "author": "Dashiell Hammett",
+  "pages": 220,
+  "read": false,
+  "tags": [
+   "noir",
+   "istraga",
+   "zločin",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dubok",
+  "title": "Duboki san",
+  "author": "Raymond Chandler",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "noir",
+   "istraga",
+   "zločin",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "ruze",
+  "title": "Ime ruže",
+  "author": "Umberto Eco",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "misterij",
+   "istraga",
+   "povijesno",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "krtica",
+  "title": "Krtica",
+  "author": "John le Carré",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "špijunaža",
+   "istraga",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "jaganj",
+  "title": "Kad jaganjci utihnu",
+  "author": "Thomas Harris",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "triler",
+   "istraga",
+   "zločin",
+   "serijski ubojica",
+   "profiliranje",
+   "FBI"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "iscezla",
+  "title": "Iščezla",
+  "author": "Gillian Flynn",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "triler",
+   "zločin",
+   "moderno",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "zmaj",
+  "title": "Muškarci koji mrze žene",
+  "author": "Stieg Larsson",
+  "pages": 550,
+  "read": false,
+  "tags": [
+   "triler",
+   "istraga",
+   "hladni slučaj",
+   "nordic noir",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mystic",
+  "title": "Mystic River",
+  "author": "Dennis Lehane",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "zločin",
+   "policija",
+   "moderno",
+   "prijateljstvo"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "tajna",
+  "title": "Tajna povijest",
+  "author": "Donna Tartt",
+  "pages": 550,
+  "read": false,
+  "tags": [
+   "zločin",
+   "mračno",
+   "moderno",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "cvjetni",
+  "title": "Ubojice cvjetnog mjeseca",
+  "author": "David Grann",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "zločin",
+   "istinita priča",
+   "istraga",
+   "novinarska istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "crvzmaj",
+  "title": "Crveni zmaj",
+  "author": "Thomas Harris",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "profiliranje",
+   "forenzika",
+   "triler"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mind",
+  "title": "Mindhunter",
+  "author": "John Douglas",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "profiliranje",
+   "istinita priča",
+   "FBI"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mraku",
+  "title": "Ubit ću te u mraku",
+  "author": "M. McNamara",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "hladni slučaj",
+   "istinita priča",
+   "novinarska istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "zodiac",
+  "title": "Zodiac",
+  "author": "Robert Graysmith",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "istinita priča",
+   "novinarska istraga",
+   "šifre"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "davo",
+  "title": "Đavo u bijelom gradu",
+  "author": "Erik Larson",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "istinita priča",
+   "povijesno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "helter",
+  "title": "Helter Skelter",
+  "author": "Vincent Bugliosi",
+  "pages": 650,
+  "read": false,
+  "tags": [
+   "kult",
+   "istinita priča",
+   "suđenje",
+   "serijski ubojica"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "snjegov",
+  "title": "Snjegović",
+  "author": "Jo Nesbø",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "policija",
+   "nordic noir",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "odjelq",
+  "title": "Žena u kavezu",
+  "author": "J. Adler-Olsen",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "policija",
+   "nordic noir",
+   "otmica"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "pjesnik",
+  "title": "Pjesnik",
+  "author": "Michael Connelly",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "novinarska istraga",
+   "policija",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "jeka",
+  "title": "Crna jeka",
+  "author": "Michael Connelly",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "policija",
+   "istraga",
+   "moderno",
+   "veterani"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dalija",
+  "title": "Crna dalija",
+  "author": "James Ellroy",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "policija",
+   "noir",
+   "korupcija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "laconf",
+  "title": "L.A. Confidential",
+  "author": "James Ellroy",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "policija",
+   "korupcija",
+   "noir",
+   "povijesno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "sumi",
+  "title": "U šumi",
+  "author": "Tana French",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "policija",
+   "nestala osoba",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "alex",
+  "title": "Alex",
+  "author": "Pierre Lemaitre",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "policija",
+   "otmica",
+   "triler",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "osumnj",
+  "title": "Odanost osumnjičenog X",
+  "author": "Keigo Higashino",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "istraga",
+   "logička zagonetka",
+   "zločin",
+   "policija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "obecanje",
+  "title": "Obećanje",
+  "author": "F. Dürrenmatt",
+  "pages": 130,
+  "read": false,
+  "tags": [
+   "policija",
+   "istraga",
+   "zločin",
+   "klasik",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dansove",
+  "title": "Dan sove",
+  "author": "Leonardo Sciascia",
+  "pages": 130,
+  "read": false,
+  "tags": [
+   "mafija",
+   "istraga",
+   "policija",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "pietr",
+  "title": "Pietr Latvijac",
+  "author": "Georges Simenon",
+  "pages": 160,
+  "read": false,
+  "tags": [
+   "policija",
+   "istraga",
+   "klasik",
+   "noir"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "kcivrem",
+  "title": "Kći vremena",
+  "author": "Josephine Tey",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "povijesno",
+   "logička zagonetka",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mocvara",
+  "title": "Močvara",
+  "author": "A. Indriðason",
+  "pages": 280,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "policija",
+   "nordic noir",
+   "forenzika"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "crvvoda",
+  "title": "Crvena voda",
+  "author": "Jurica Pavičić",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "nestala osoba",
+   "policija",
+   "obitelj",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "ripley",
+  "title": "Talentirani g. Ripley",
+  "author": "P. Highsmith",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "zločin",
+   "klasik",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "susa",
+  "title": "Suša",
+  "author": "Jane Harper",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "policija",
+   "istraga",
+   "mala sredina",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "deathus",
+  "title": "The Death of Us",
+  "author": "Abigail Dean",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "triler",
+   "zločin",
+   "obitelj",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "ashes",
+  "title": "King of Ashes",
+  "author": "S. A. Cosby",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "zločin",
+   "obitelj",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "winterj",
+  "title": "The Winter Job",
+  "author": "Antti Tuomainen",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "nordic noir",
+   "humor",
+   "zločin",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "cella",
+  "title": "The Girl in Cell A",
+  "author": "Vaseem Khan",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "istraga",
+   "moderno",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "artlie",
+  "title": "The Art of a Lie",
+  "author": "L. Shepherd-Robinson",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "povijesno",
+   "prijevara",
+   "zločin",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "godwood",
+  "title": "The God of the Woods",
+  "author": "Liz Moore",
+  "pages": 480,
+  "read": false,
+  "tags": [
+   "nestala osoba",
+   "obitelj",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "incrowd",
+  "title": "The In Crowd",
+  "author": "Charlotte Vassell",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "policija",
+   "zločin",
+   "humor",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "tainted",
+  "title": "The Tainted Cup",
+  "author": "R. J. Bennett",
+  "pages": 430,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "fantastika",
+   "istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "strange",
+  "title": "Strange Pictures",
+  "author": "Uketsu",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "misterij",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "murderl",
+  "title": "Murderland",
+  "author": "Caroline Fraser",
+  "pages": 480,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "istinita priča",
+   "novinarska istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "deadmon",
+  "title": "Dead Money",
+  "author": "Jakob Kerr",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "tehnologija",
+   "zločin",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "kostiju",
+  "title": "Sakupljač kostiju",
+  "author": "Jeffery Deaver",
+  "pages": 400,
+  "read": true,
+  "tags": [
+   "forenzika",
+   "serijski ubojica",
+   "istraga",
+   "policija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "ociju",
+  "title": "Sakupljač očiju",
+  "author": "Sebastian Fitzek",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "serijski ubojica",
+   "otmica",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "terapija",
+  "title": "Terapija",
+  "author": "Sebastian Fitzek",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "nestala osoba",
+   "nepouzdani pripovjedač"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "putnik23",
+  "title": "Putnik 23",
+  "author": "Sebastian Fitzek",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "nestala osoba",
+   "more",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "raspeti",
+  "title": "Raspeti",
+  "author": "Chris Carter",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "policija",
+   "profiliranje",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "evilmind",
+  "title": "An Evil Mind",
+  "author": "Chris Carter",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "profiliranje",
+   "FBI",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "lijepe",
+  "title": "Lijepe djevojke",
+  "author": "Karin Slaughter",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "obitelj",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "pticar",
+  "title": "Ptičar",
+  "author": "Mo Hayder",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "policija",
+   "forenzika",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "blackout",
+  "title": "Blackout",
+  "author": "Marc Elsberg",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "tehnologija",
+   "triler",
+   "preživljavanje",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "negovori",
+  "title": "Ne govori nikome",
+  "author": "Harlan Coben",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "triler",
+   "nestala osoba",
+   "obitelj",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "vrijeme",
+  "title": "Vrijeme za ubijanje",
+  "author": "John Grisham",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "sudski",
+   "zločin",
+   "obitelj",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "killingf",
+  "title": "Killing Floor",
+  "author": "Lee Child",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "akcija",
+   "veterani",
+   "zločin",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "spider",
+  "title": "Along Came a Spider",
+  "author": "James Patterson",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "otmica",
+   "FBI",
+   "profiliranje"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "alive",
+  "title": "Alive",
+  "author": "Piers Paul Read",
+  "pages": 320,
+  "read": false,
+  "tags": [
+   "preživljavanje",
+   "planine",
+   "istinita priča",
+   "led"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "ralston",
+  "title": "127 sati",
+  "author": "Aron Ralston",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "preživljavanje",
+   "istinita priča",
+   "sam protiv prirode",
+   "pustinja"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "adrift",
+  "title": "Adrift",
+  "author": "Steven Callahan",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "more",
+   "preživljavanje",
+   "istinita priča",
+   "brodolom"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "longwalk",
+  "title": "Dugi marš",
+  "author": "Sławomir Rawicz",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "bijeg",
+   "pješačenje",
+   "istinita priča",
+   "izdržljivost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "worsley",
+  "title": "Shackletonovo putovanje čamcem",
+  "author": "Frank Worsley",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "led",
+   "more",
+   "ekspedicija",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "nansen",
+  "title": "Najdalji sjever",
+  "author": "Fridtjof Nansen",
+  "pages": 550,
+  "read": false,
+  "tags": [
+   "led",
+   "ekspedicija",
+   "istinita priča",
+   "Arktik"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "dana",
+  "title": "Dvije godine pod jarbolom",
+  "author": "R. H. Dana",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "more",
+   "jedrenje",
+   "istinita priča",
+   "klasik"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "seawolf",
+  "title": "Morski vuk",
+  "author": "Jack London",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "more",
+   "klasik",
+   "jedrenje",
+   "brutalnost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "riddle",
+  "title": "Zagonetka pijeska",
+  "author": "Erskine Childers",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "more",
+   "špijunaža",
+   "klasik",
+   "jedrenje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "papillon",
+  "title": "Papillon",
+  "author": "Henri Charrière",
+  "pages": 550,
+  "read": false,
+  "tags": [
+   "bijeg",
+   "zatvor",
+   "istinita priča",
+   "džungla"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "otet",
+  "title": "Otet",
+  "author": "R. L. Stevenson",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "bijeg",
+   "klasik",
+   "pustolovina",
+   "Škotska"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "salomon",
+  "title": "Rudnici kralja Salomona",
+  "author": "H. R. Haggard",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "ekspedicija",
+   "klasik",
+   "Afrika",
+   "pustolovina"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "ona",
+  "title": "Ona",
+  "author": "H. R. Haggard",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "ekspedicija",
+   "klasik",
+   "Afrika",
+   "misterij"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "80dana",
+  "title": "Put oko svijeta u 80 dana",
+  "author": "Jules Verne",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "klasik",
+   "utrka",
+   "humor"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "20000",
+  "title": "20.000 milja pod morem",
+  "author": "Jules Verne",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "more",
+   "klasik",
+   "znanost",
+   "ekspedicija"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "tajnotok",
+  "title": "Tajanstveni otok",
+  "author": "Jules Verne",
+  "pages": 600,
+  "read": false,
+  "tags": [
+   "otok",
+   "preživljavanje",
+   "klasik",
+   "znanost"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "svicarski",
+  "title": "Švicarski Robinson",
+  "author": "J. D. Wyss",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "otok",
+   "preživljavanje",
+   "klasik",
+   "obitelj"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "sjekira",
+  "title": "Sjekira",
+  "author": "Gary Paulsen",
+  "pages": 180,
+  "read": false,
+  "tags": [
+   "divljina",
+   "preživljavanje",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "mojastrana",
+  "title": "Moja strana planine",
+  "author": "Jean C. George",
+  "pages": 180,
+  "read": false,
+  "tags": [
+   "divljina",
+   "preživljavanje",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "walden",
+  "title": "Walden",
+  "author": "H. D. Thoreau",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "divljina",
+   "meditativno",
+   "klasik"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "desert",
+  "title": "Desert Solitaire",
+  "author": "Edward Abbey",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "pustinja",
+   "meditativno",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "bryson",
+  "title": "Šetnja šumom",
+  "author": "Bill Bryson",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "pješačenje",
+   "humor",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "divlja",
+  "title": "Divlja",
+  "author": "Cheryl Strayed",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "pješačenje",
+   "istinita priča",
+   "moderno",
+   "sam protiv prirode"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "tracks",
+  "title": "Tragovi",
+  "author": "Robyn Davidson",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "pustinja",
+   "sam protiv prirode",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "stewart",
+  "title": "Mjesta između",
+  "author": "Rory Stewart",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "pješačenje",
+   "putovanje",
+   "istinita priča",
+   "planine"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "tibet",
+  "title": "Sedam godina na Tibetu",
+  "author": "Heinrich Harrer",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "planine",
+   "bijeg",
+   "istinita priča",
+   "putovanje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "silence",
+  "title": "Into the Silence",
+  "author": "Wade Davis",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "planine",
+   "ekspedicija",
+   "istinita priča",
+   "povijesno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "climb",
+  "title": "Uspon",
+  "author": "Anatolij Bukrejev",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "planine",
+   "ekspedicija",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "viesturs",
+  "title": "No Shortcuts to the Top",
+  "author": "Ed Viesturs",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "planine",
+   "izdržljivost",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "deepsurv",
+  "title": "Deep Survival",
+  "author": "Laurence Gonzales",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "preživljavanje",
+   "znanost",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "isaac",
+  "title": "Isaacova oluja",
+  "author": "Erik Larson",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "oluja",
+   "istinita priča",
+   "povijesno",
+   "more"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "zahara",
+  "title": "Kosturi Zahare",
+  "author": "Dean King",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "pustinja",
+   "brodolom",
+   "preživljavanje",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "greene",
+  "title": "Putovanje bez karata",
+  "author": "Graham Greene",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "Afrika",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "bazaar",
+  "title": "Veliki željeznički bazar",
+  "author": "Paul Theroux",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "vlak",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "patagonia",
+  "title": "U Patagoniji",
+  "author": "Bruce Chatwin",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "istinita priča",
+   "meditativno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "songlines",
+  "title": "Pjesme staza",
+  "author": "Bruce Chatwin",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "putovanje",
+   "pustinja",
+   "meditativno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "emerald",
+  "title": "The Emerald Mile",
+  "author": "Kevin Fedarko",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "ekspedicija",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "wager",
+  "title": "Wager",
+  "author": "David Grann",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "more",
+   "brodolom",
+   "istinita priča",
+   "suđenje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "whitedark",
+  "title": "Bijela tama",
+  "author": "David Grann",
+  "pages": 150,
+  "read": false,
+  "tags": [
+   "led",
+   "Antarktika",
+   "sam protiv prirode",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "mutiny",
+  "title": "Pobuna na Bountyju",
+  "author": "Nordhoff i Hall",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "more",
+   "pobuna",
+   "klasik",
+   "jedrenje"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "shipofgold",
+  "title": "Ship of Gold",
+  "author": "Gary Kinder",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "more",
+   "brodolom",
+   "blago",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "endurance2",
+  "title": "Antarktički dnevnik",
+  "author": "Robert F. Scott",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "led",
+   "Antarktika",
+   "ekspedicija",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "river",
+  "title": "Rijeka sumnje",
+  "author": "Buddy Levy",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "rijeka",
+   "džungla",
+   "ekspedicija",
+   "istinita priča"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "darkwater",
+  "title": "Tamna voda",
+  "author": "Robert Stone",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "more",
+   "jedrenje",
+   "mračno",
+   "moderno"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "kalahari",
+  "title": "Cry of the Kalahari",
+  "author": "Owens",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "pustinja",
+   "divljina",
+   "istinita priča",
+   "Afrika"
+  ],
+  "genre": "adv"
+ },
+ {
+  "id": "crvendac",
+  "title": "Crvendać",
+  "author": "Jo Nesbø",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "povijesno",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "lackberg",
+  "title": "Ledena princeza",
+  "author": "Camilla Läckberg",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "obitelj",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mankell",
+  "title": "Ubojice bez lica",
+  "author": "Henning Mankell",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "roseanna",
+  "title": "Roseanna",
+  "author": "Sjöwall i Wahlöö",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "hladni slučaj",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "fossum",
+  "title": "Ne osvrći se",
+  "author": "Karin Fossum",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "mala sredina"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "nesser",
+  "title": "Mind’s Eye",
+  "author": "Håkan Nesser",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "nordic noir",
+   "logička zagonetka"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "kepler",
+  "title": "Hipnotizer",
+  "author": "Lars Kepler",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "policija",
+   "nordic noir"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "grave",
+  "title": "Tišina groba",
+  "author": "A. Indriðason",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "policija",
+   "nordic noir",
+   "obitelj"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "pdjames",
+  "title": "Pokrijte joj lice",
+  "author": "P. D. James",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "policija",
+   "logička zagonetka",
+   "klasik",
+   "obitelj"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "rendell",
+  "title": "Presuda od kamena",
+  "author": "Ruth Rendell",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "zločin",
+   "klasik",
+   "obitelj"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dexter",
+  "title": "Zadnji autobus za Woodstock",
+  "author": "Colin Dexter",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "policija",
+   "logička zagonetka",
+   "istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "rebus",
+  "title": "Čvorovi i križevi",
+  "author": "Ian Rankin",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "policija",
+   "serijski ubojica",
+   "istraga",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mcdermid",
+  "title": "Pjev sirena",
+  "author": "Val McDermid",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "profiliranje",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "garnethill",
+  "title": "Garnethill",
+  "author": "Denise Mina",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "zločin",
+   "mračno",
+   "moderno",
+   "istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "atkinson",
+  "title": "Slučajevi iz prošlosti",
+  "author": "Kate Atkinson",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "hladni slučaj",
+   "obitelj",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "bauer",
+  "title": "Blacklands",
+  "author": "Belinda Bauer",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "hladni slučaj",
+   "obitelj"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "magpie",
+  "title": "Ubojstva svraka",
+  "author": "Anthony Horowitz",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "misterij",
+   "moderno",
+   "humor"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "kukavicji",
+  "title": "Kukavičji zov",
+  "author": "Robert Galbraith",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "istraga",
+   "zločin",
+   "moderno",
+   "veterani"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "griffiths",
+  "title": "Mjesta prijelaza",
+  "author": "Elly Griffiths",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "forenzika",
+   "hladni slučaj",
+   "policija",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "redharvest",
+  "title": "Krvava žetva",
+  "author": "Dashiell Hammett",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "noir",
+   "korupcija",
+   "zločin",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "farewell",
+  "title": "Zbogom, dušo",
+  "author": "Raymond Chandler",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "noir",
+   "istraga",
+   "zločin",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "chill",
+  "title": "Jeza",
+  "author": "Ross Macdonald",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "noir",
+   "obitelj",
+   "istraga",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "postman",
+  "title": "Poštar uvijek zvoni dvaput",
+  "author": "James M. Cain",
+  "pages": 120,
+  "read": false,
+  "tags": [
+   "noir",
+   "zločin",
+   "klasik",
+   "psihotriler"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "killerinside",
+  "title": "Ubojica u meni",
+  "author": "Jim Thompson",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "nepouzdani pripovjedač",
+   "noir",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "getshorty",
+  "title": "Get Shorty",
+  "author": "Elmore Leonard",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "zločin",
+   "humor",
+   "moderno",
+   "mafija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mosley",
+  "title": "Đavo u plavoj haljini",
+  "author": "Walter Mosley",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "noir",
+   "istraga",
+   "povijesno",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "bluebird",
+  "title": "Bluebird, Bluebird",
+  "author": "Attica Locke",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "zločin",
+   "mala sredina",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "powerdog",
+  "title": "Moć psa",
+  "author": "Don Winslow",
+  "pages": 550,
+  "read": false,
+  "tags": [
+   "mafija",
+   "korupcija",
+   "policija",
+   "mračno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "neonrain",
+  "title": "Neonska kiša",
+  "author": "James Lee Burke",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "korupcija",
+   "noir",
+   "veterani"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "postmortem",
+  "title": "Postmortem",
+  "author": "Patricia Cornwell",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "forenzika",
+   "serijski ubojica",
+   "policija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dejadead",
+  "title": "Déjà Dead",
+  "author": "Kathy Reichs",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "forenzika",
+   "serijski ubojica",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "coffin",
+  "title": "Plesač u lijesu",
+  "author": "Jeffery Deaver",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "forenzika",
+   "istraga",
+   "policija",
+   "triler"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "surgeon",
+  "title": "Kirurg",
+  "author": "Tess Gerritsen",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "forenzika",
+   "policija",
+   "triler"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "rulesprey",
+  "title": "Rules of Prey",
+  "author": "John Sandford",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "policija",
+   "triler"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "sharp",
+  "title": "Oštri predmeti",
+  "author": "Gillian Flynn",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "obitelj",
+   "mračno",
+   "novinarska istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "vlak",
+  "title": "Djevojka u vlaku",
+  "author": "Paula Hawkins",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "nepouzdani pripovjedač",
+   "nestala osoba",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "sutljiva",
+  "title": "Šutljiva pacijentica",
+  "author": "Alex Michaelides",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "psihotriler",
+   "nepouzdani pripovjedač",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "evelyn",
+  "title": "Sedam smrti Evelyn Hardcastle",
+  "author": "Stuart Turton",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "misterij",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "ackroyd",
+  "title": "Ubojstvo Rogera Ackroyda",
+  "author": "Agatha Christie",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "nepouzdani pripovjedač",
+   "klasik",
+   "misterij"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "orient",
+  "title": "Ubojstvo u Orient Expressu",
+  "author": "Agatha Christie",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "vlak",
+   "klasik",
+   "misterij"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "cetvorice",
+  "title": "Znak četvorice",
+  "author": "A. Conan Doyle",
+  "pages": 200,
+  "read": false,
+  "tags": [
+   "misterij",
+   "istraga",
+   "klasik",
+   "blago"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "morgue",
+  "title": "Ubojstva u ulici Morgue",
+  "author": "E. A. Poe",
+  "pages": 60,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "istraga",
+   "klasik",
+   "misterij"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "bijela",
+  "title": "Žena u bijelom",
+  "author": "Wilkie Collins",
+  "pages": 600,
+  "read": false,
+  "tags": [
+   "misterij",
+   "gotika",
+   "klasik",
+   "prijevara"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "mjesecev",
+  "title": "Mjesečev kamen",
+  "author": "Wilkie Collins",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "misterij",
+   "istraga",
+   "klasik",
+   "blago"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "brown",
+  "title": "Nevinost oca Browna",
+  "author": "G. K. Chesterton",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "misterij",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "gaudy",
+  "title": "Gaudy Night",
+  "author": "Dorothy L. Sayers",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "misterij",
+   "istraga",
+   "klasik",
+   "fakultet"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "vargas",
+  "title": "Čovjek kredom",
+  "author": "Fred Vargas",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "serijski ubojica",
+   "misterij",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "camilleri",
+  "title": "Oblik vode",
+  "author": "Andrea Camilleri",
+  "pages": 220,
+  "read": false,
+  "tags": [
+   "policija",
+   "mafija",
+   "korupcija",
+   "humor"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "malice",
+  "title": "Zloba",
+  "author": "Keigo Higashino",
+  "pages": 280,
+  "read": false,
+  "tags": [
+   "logička zagonetka",
+   "nepouzdani pripovjedač",
+   "istraga",
+   "policija"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "out",
+  "title": "Out",
+  "author": "Natsuo Kirino",
+  "pages": 500,
+  "read": false,
+  "tags": [
+   "zločin",
+   "mračno",
+   "obitelj",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "imanishi",
+  "title": "Inspektor Imanishi istražuje",
+  "author": "Seicho Matsumoto",
+  "pages": 300,
+  "read": false,
+  "tags": [
+   "policija",
+   "hladni slučaj",
+   "istraga",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "azazel",
+  "title": "Azazel",
+  "author": "Boris Akunin",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "istraga",
+   "povijesno",
+   "misterij",
+   "špijunaža"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "annrule",
+  "title": "Stranac pored mene",
+  "author": "Ann Rule",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "serijski ubojica",
+   "istinita priča",
+   "suđenje"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "berendt",
+  "title": "Ponoć u vrtu dobra i zla",
+  "author": "John Berendt",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "zločin",
+   "istinita priča",
+   "suđenje",
+   "mala sredina"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "homicide",
+  "title": "Homicide",
+  "author": "David Simon",
+  "pages": 600,
+  "read": false,
+  "tags": [
+   "policija",
+   "istinita priča",
+   "novinarska istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "spywho",
+  "title": "Špijun koji je došao s hladnoće",
+  "author": "John le Carré",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "špijunaža",
+   "mračno",
+   "klasik",
+   "izdaja"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "thirdman",
+  "title": "Treći čovjek",
+  "author": "Graham Greene",
+  "pages": 150,
+  "read": false,
+  "tags": [
+   "špijunaža",
+   "istraga",
+   "klasik",
+   "izdaja"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "dimitrios",
+  "title": "Maska Dimitriosa",
+  "author": "Eric Ambler",
+  "pages": 250,
+  "read": false,
+  "tags": [
+   "špijunaža",
+   "istraga",
+   "klasik",
+   "prijevara"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "sakal",
+  "title": "Dan Šakala",
+  "author": "Frederick Forsyth",
+  "pages": 400,
+  "read": false,
+  "tags": [
+   "špijunaža",
+   "atentat",
+   "triler",
+   "klasik"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "fatherland",
+  "title": "Fatherland",
+  "author": "Robert Harris",
+  "pages": 350,
+  "read": false,
+  "tags": [
+   "policija",
+   "povijesno",
+   "špijunaža",
+   "istraga"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "firma",
+  "title": "Firma",
+  "author": "John Grisham",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "sudski",
+   "korupcija",
+   "triler",
+   "moderno"
+  ],
+  "genre": "crime"
+ },
+ {
+  "id": "turow",
+  "title": "Pretpostavljena nevinost",
+  "author": "Scott Turow",
+  "pages": 450,
+  "read": false,
+  "tags": [
+   "sudski",
+   "zločin",
+   "istraga",
+   "moderno"
+  ],
+  "genre": "crime"
+ }
+]

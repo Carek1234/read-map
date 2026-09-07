@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa knjiga — Obsidian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  :root{
+    --bg:#1e1e1e;
+    --bg-2:#161616;
+    --bg-3:#262626;
+    --border:#333;
+    --border-soft:#2a2a2a;
+    --text:#dadada;
+    --muted:#8e8e8e;
+    --faint:#5c5c5c;
+    --accent:#8b6cef;
+    --accent-soft:#6f5ac4;
+    --node:#b3b3b3;
+    --link:#3d3d3d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:Inter,-apple-system,"Segoe UI",sans-serif;
+    font-size:13px;overflow:hidden;
+  }
+  #app{display:flex;height:100vh;width:100vw}
+
+  /* ---------- lijeva traka: popis kao file explorer ---------- */
+  .sidebar{
+    width:236px;flex:0 0 236px;background:var(--bg-2);
+    border-right:1px solid var(--border-soft);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .sb-head{
+    padding:12px 14px 10px;border-bottom:1px solid var(--border-soft);
+  }
+  .sb-head h1{
+    font-size:13px;font-weight:600;margin:0 0 3px;letter-spacing:.2px;
+  }
+  .sb-head p{margin:0;font-size:11.5px;color:var(--faint)}
+  .sb-list{overflow-y:auto;padding:8px 6px 20px;flex:1}
+  .sb-group{margin-bottom:6px}
+  .sb-group > .gh{
+    display:flex;align-items:center;gap:5px;
+    padding:5px 8px;font-size:11.5px;color:var(--muted);cursor:pointer;
+    border-radius:4px;user-select:none;
+  }
+  .sb-group > .gh:hover{background:#222}
+  .gh .chev{font-size:9px;transition:transform .12s;color:var(--faint)}
+  .sb-group.closed .chev{transform:rotate(-90deg)}
+  .sb-group.closed .gi{display:none}
+  .gh .count{margin-left:auto;color:var(--faint);font-variant-numeric:tabular-nums}
+  .gi{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    color:var(--text);font-family:inherit;font-size:12.5px;
+    padding:5px 8px 5px 22px;border-radius:4px;cursor:pointer;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .gi:hover{background:#222}
+  .gi.on{background:#2a2545;color:#cdbcff}
+  .gi.dim{color:var(--faint)}
+  .gi:focus-visible{outline:1px solid var(--accent);outline-offset:-1px}
+
+  /* ---------- graf ---------- */
+  .canvas{position:relative;flex:1;min-width:0}
+  svg#graph{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+  svg#graph:active{cursor:grabbing}
+  .node{cursor:pointer}
+  .node:focus{outline:none}
+  .node:focus-visible circle{stroke:var(--accent);stroke-width:2}
+  .node circle, .edge line.vis{ vector-effect:non-scaling-stroke }
+  .node text{
+    font-family:Inter,sans-serif;font-size:10.5px;fill:var(--node);
+    pointer-events:none;paint-order:stroke;
+    stroke:var(--bg);stroke-width:3px;stroke-linejoin:round;
+  }
+
+  /* ---------- plutajuća ploča postavki (Obsidian graph settings) ---------- */
+  .controls{
+    position:absolute;top:12px;left:12px;z-index:3;width:246px;
+    background:var(--bg-3);border:1px solid var(--border);border-radius:6px;
+    padding:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);
+  }
+  .sect{border-bottom:1px solid var(--border-soft)}
+  .sect:last-child{border-bottom:none}
+  .sect > .sh{
+    display:flex;align-items:center;gap:5px;
+    padding:7px 8px;font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none;
+    border-radius:4px;
+  }
+  .sect > .sh:hover{color:var(--text)}
+  .sect.closed .sb{display:none}
+  .sect.closed .chev{transform:rotate(-90deg)}
+  .sb{padding:2px 8px 12px}
+  .ctl{margin-bottom:12px}
+  .ctl:last-child{margin-bottom:0}
+  .ctl label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+  .ctl label b{color:var(--text);font-weight:500;font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;height:3px;appearance:none;background:#3a3a3a;border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{
+    appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);
+    cursor:pointer;border:none;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer;border:none;
+  }
+  input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(139,108,239,.3)}
+  .legend{display:flex;flex-wrap:wrap;gap:7px 12px;font-size:11px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .dot.read{background:var(--accent)}
+  .dot.unread{background:var(--node)}
+  .dot.horizon{border:1px solid var(--faint);background:transparent}
+  .dot.nepoznato{border:1px dashed #8e8e8e;background:transparent;opacity:.5}
+  .counter{margin-top:10px;font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+  .counter b{color:var(--text);font-weight:500;font-variant-numeric:tabular-nums}
+
+  /* ---------- desna ploča ---------- */
+  aside.closed{display:none}
+  .pclose{
+    position:absolute;top:10px;right:10px;z-index:2;
+    background:none;border:none;color:var(--faint);cursor:pointer;
+    font-size:14px;line-height:1;padding:4px 6px;border-radius:4px;font-family:inherit;
+  }
+  .pclose:hover{color:var(--text);background:#222}
+  aside{
+    width:300px;flex:0 0 300px;position:relative;background:var(--bg-2);
+    border-left:1px solid var(--border-soft);
+    padding:16px 16px 30px;overflow-y:auto;
+  }
+  aside h2{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.35}
+  .byline{font-size:12px;color:var(--muted);margin:0 0 14px}
+  .meta{display:flex;gap:12px;font-size:11.5px;color:var(--faint);margin-bottom:14px;
+    font-variant-numeric:tabular-nums}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+  .tag{
+    font-size:11px;padding:2px 7px;border-radius:10px;
+    background:#2a2545;color:#b6a4f0;
+  }
+  .why{border-top:1px solid var(--border-soft);padding-top:14px}
+  .why h3{font-size:11.5px;font-weight:500;color:var(--muted);margin:0 0 11px}
+  .why-row{margin-bottom:10px;font-size:12.5px}
+  .why-row .t{display:flex;justify-content:space-between;gap:10px;margin-bottom:4px}
+  .why-row .t span:last-child{color:var(--faint);font-variant-numeric:tabular-nums;font-size:11.5px}
+  .bar{height:3px;background:#333;border-radius:3px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--node)}
+  .bar.read i{background:var(--accent)}
+
+  button.mark{
+    width:100%;margin-top:18px;padding:8px;
+    font-family:inherit;font-size:12.5px;font-weight:500;
+    background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;
+    transition:background .13s;
+  }
+  button.mark:hover{background:var(--accent-soft)}
+  button.mark:focus-visible{outline:2px solid #cdbcff;outline-offset:2px}
+  button.mark.undo{background:#333;color:var(--muted)}
+  button.mark.undo:hover{background:#3d3d3d;color:var(--text)}
+
+  .empty{font-size:12.5px;line-height:1.6;color:var(--muted)}
+  .empty strong{color:var(--text);font-weight:600;display:block;margin-bottom:8px;font-size:13px}
+  .reclist{margin-top:16px;padding-top:14px;border-top:1px solid var(--border-soft)}
+  .rec{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    padding:7px 8px;cursor:pointer;color:inherit;font-family:inherit;border-radius:4px;
+  }
+  .rec:hover{background:#222}
+  .rec .n{font-size:12.5px;color:var(--text);display:block;margin-bottom:2px}
+  .rec .s{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+  .rec:focus-visible{outline:1px solid var(--accent);outline-offset:-1px}
+
+  @media (max-width:1000px){
+    .sidebar{display:none}
+    aside{position:absolute;bottom:0;left:0;right:0;width:100%;flex:none;height:44%;
+      border-left:none;border-top:1px solid var(--border)}
+    .controls{width:calc(100% - 24px)}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* --- veze: postotak i klik --- */
+  .edge .hit{stroke:transparent;fill:none;cursor:pointer}
+  .edge .lbl{
+    font-size:10px;font-weight:500;pointer-events:none;
+    font-variant-numeric:tabular-nums;
+  }
+  .pair{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+  .pair .pct{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+  .pair .frac{font-size:11.5px;opacity:.6}
+  .tag.off{opacity:.42}
+  .side{margin-bottom:12px}
+  .side h4{font-size:11px;font-weight:500;margin:0 0 6px;color:inherit;opacity:.55}
+  .openbtn{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    padding:7px 0;cursor:pointer;color:inherit;font-family:inherit;font-size:12.5px;
+  }
+  .openbtn:hover{text-decoration:underline}
+  .slot{
+    margin-top:14px;padding:10px 11px;border-radius:4px;font-size:12px;line-height:1.55;
+    background:rgba(255,255,255,.045);opacity:.85;
+  }
+  .slot b{font-weight:600;opacity:1}
+
+  .jumpbtn{
+    width:100%;margin-top:10px;padding:7px;cursor:pointer;
+    font-family:inherit;font-size:11.5px;font-weight:500;
+    background:transparent;color:inherit;border:1px dashed currentColor;
+    border-radius:4px;opacity:.65;
+  }
+  .jumpbtn:hover{opacity:1}
+  .jumpbtn:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+
+  .gtoggle{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+  .gtoggle label{
+    display:flex;align-items:center;gap:8px;font-size:11.5px;
+    cursor:pointer;user-select:none;opacity:.75;
+  }
+  .gtoggle label:hover{opacity:1}
+  .gtoggle input{accent-color:#8b6cef;width:13px;height:13px;cursor:pointer;margin:0}
+  .gtoggle .sw{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  .lay{display:flex;gap:5px;margin-bottom:12px}
+  .lay button{
+    flex:1;padding:5px 4px;font-family:inherit;font-size:11px;cursor:pointer;
+    background:transparent;color:inherit;border:1px solid currentColor;border-radius:3px;opacity:.45;
+  }
+  .lay button.on{opacity:1;font-weight:500}
+  .lay button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+  .band text{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+
+  .quip{
+    padding:10px 14px 12px;border-bottom:1px solid var(--border-soft);
+    font-size:11.5px;line-height:1.55;color:var(--muted);cursor:pointer;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .quip:hover{color:var(--text)}
+  .quip .ic{opacity:.5;flex:0 0 auto;margin-top:1px}
+
+  .quipcard{
+    position:absolute;right:16px;bottom:16px;z-index:5;width:298px;
+    background:var(--bg-3);border:1px solid var(--border);border-radius:8px;
+    padding:13px 14px 12px;box-shadow:0 6px 20px rgba(0,0,0,.45);
+  }
+  .quipcard.hidden{display:none}
+  .qc-top{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+  .qc-top .lab{
+    font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--faint);margin-right:auto;
+  }
+  .qc-top button{
+    background:none;border:none;color:var(--muted);cursor:pointer;
+    font-size:14px;line-height:1;padding:3px 5px;border-radius:4px;font-family:inherit;
+  }
+  .qc-top button:hover{color:var(--text);background:#333}
+  .qc-top button:focus-visible{outline:1px solid var(--accent);outline-offset:1px}
+  .qc-body{font-size:12.5px;line-height:1.6;color:var(--text);min-height:60px;
+    transition:opacity .18s, transform .18s}
+  .qc-body.swap{opacity:0;transform:translateY(6px)}
+  .quipopen{
+    position:absolute;right:16px;bottom:16px;z-index:5;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--bg-3);border:1px solid var(--border);color:var(--muted);
+    cursor:pointer;font-size:14px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.4);
+  }
+  .quipopen:hover{color:var(--text)}
+  .quipopen.hidden{display:none}
+  @media (max-width:1000px){ .quipcard{width:calc(100% - 32px)} }
+
+  .unlock{
+    margin:12px 0 14px;padding:10px 12px;border-radius:6px;
+    background:rgba(139,108,239,.13);border:1px solid rgba(139,108,239,.3);
+    font-size:12px;line-height:1.5;color:var(--text);
+  }
+  .unlock b{font-size:17px;font-weight:600;color:var(--accent);margin-right:3px}
+  .unlock span{display:block;margin-top:3px;font-size:11px;color:var(--muted)}
+  .unlock.quiet{background:none;border-color:var(--border-soft);color:var(--muted)}
+
+  .status{
+    position:absolute;top:18px;left:50%;transform:translateX(-50%) translateY(-6px);
+    z-index:6;pointer-events:none;opacity:0;
+    font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);background:rgba(22,22,22,.88);
+    border:1px solid var(--border);padding:7px 15px;border-radius:4px;
+    transition:opacity .25s, transform .25s;
+  }
+  .status.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .status b{color:var(--accent);font-weight:500}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="sidebar">
+    <div class="sb-head">
+      <h1>Mapa knjiga</h1>
+      <p>202 zapisa</p>
+    </div>
+    <div class="sb-list" id="sblist"></div>
+  </div>
+
+  <div class="canvas">
+    <svg id="graph"></svg>
+
+    <div class="status" id="status"></div>
+    <div class="quipcard" id="quipCard">
+      <div class="qc-top">
+        <span class="lab">Iz mape</span>
+        <button id="quipNext" title="Izvuci novu">&#8635;</button>
+        <button id="quipClose" title="Zatvori">&#10005;</button>
+      </div>
+      <div class="qc-body" id="quipT"></div>
+    </div>
+    <button class="quipopen hidden" id="quipOpen" title="Prika&#382;i karticu">&#9679;</button>
+
+    <div class="controls">
+      <div class="sect">
+        <div class="sh" data-sect><span class="chev">&#9662;</span> Filteri</div>
+        <div class="sb">
+          <div class="ctl">
+            <label for="thr">Prag sličnosti <b id="thrV">0.20</b></label>
+            <input type="range" id="thr" min="0.05" max="0.6" step="0.01" value="0.2">
+          </div>
+          <div class="ctl">
+            <label for="kk">Otkriva po knjizi <b id="kV">5</b></label>
+            <input type="range" id="kk" min="1" max="12" step="1" value="5">
+          </div>
+          <div class="ctl">
+            <label for="pg">Najviše stranica <b id="pgV">sve</b></label>
+            <input type="range" id="pg" min="90" max="700" step="10" value="700">
+          </div>
+        </div>
+      </div>
+      <div class="sect">
+        <div class="sh" data-sect><span class="chev">&#9662;</span> Prikaz</div>
+        <div class="sb">
+          <div class="gtoggle">
+        <label><input type="checkbox" id="gadv" checked><i class="sw" style="background:#8b6cef"></i> Pustolovina</label>
+        <label><input type="checkbox" id="gdrift" checked><i class="sw" style="background:#8e8e8e;opacity:.4"></i> Gibanje</label>
+        <label><input type="checkbox" id="gcrime" checked><i class="sw" style="background:#4ec9b0"></i> Krimi i istraga</label>
+      </div>
+      <div class="legend">
+            <span><i class="dot read"></i> pročitano</span>
+            <span><i class="dot unread"></i> prijedlog</span>
+            <span><i class="dot horizon"></i> horizont</span>
+        <span><i class="dot nepoznato"></i> nepoznato</span>
+          </div>
+          <div class="counter"><span>Otkriveno</span><b id="found">&mdash;</b></div>
+      <div class="counter"><span>Mostova</span><b id="bridges">&mdash;</b></div>
+      <div class="counter"><span>Jo&#353; neotkriveno</span><b id="hidden">0</b></div>
+      <button class="jumpbtn" id="jump" disabled>Istra&#382;i novu</button>
+      <button class="jumpbtn" id="fit">Namjesti pogled &#9635;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside id="panel"></aside>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   1. PODACI
+   U pravoj verziji ovo dolazi iz IndexedDB-a / Open Library API-ja.
+   `read` je jedino stanje koje korisnik mijenja.
+------------------------------------------------------------------ */
+const BOOKS = [
+  {id:'zov',    title:'Zov divljine',            author:'Jack London',        pages:120, read:true,  tags:['divljina','preživljavanje','životinje','klasik','Aljaska']},
+  {id:'ocnjak', title:'Bijeli očnjak',           author:'Jack London',        pages:250, read:false, tags:['divljina','životinje','klasik','Aljaska']},
+  {id:'starac', title:'Starac i more',           author:'Ernest Hemingway',   pages:100, read:true,  tags:['more','izdržljivost','klasik','sam protiv prirode']},
+  {id:'noc',    title:'Noćni let',               author:'A. de Saint-Exupéry',pages:100, read:false, tags:['letenje','izdržljivost','klasik','sam protiv prirode']},
+  {id:'zemlja', title:'Zemlja ljudi',            author:'A. de Saint-Exupéry',pages:200, read:false, tags:['letenje','pustinja','istinita priča','izdržljivost']},
+  {id:'srce',   title:'Srce tame',               author:'Joseph Conrad',      pages:110, read:false, tags:['rijeka','ekspedicija','klasik','mračno']},
+  {id:'izgub',  title:'Izgubljeni svijet',       author:'A. Conan Doyle',     pages:200, read:false, tags:['ekspedicija','avantura','klasik','znanost']},
+  {id:'otok',   title:'Otok s blagom',           author:'R. L. Stevenson',    pages:200, read:true,  tags:['more','pirati','klasik','avantura']},
+  {id:'cesta',  title:'Cesta',                   author:'Cormac McCarthy',    pages:230, read:false, tags:['putovanje','preživljavanje','mračno','moderno']},
+  {id:'void',   title:'Touching the Void',       author:'Joe Simpson',        pages:210, read:false, tags:['planine','preživljavanje','istinita priča','izdržljivost']},
+  {id:'wild',   title:'Into the Wild',           author:'Jon Krakauer',       pages:200, read:false, tags:['divljina','Aljaska','istinita priča','moderno']},
+  {id:'thin',   title:'Into Thin Air',           author:'Jon Krakauer',       pages:300, read:false, tags:['planine','ekspedicija','istinita priča','moderno']},
+  {id:'endur',  title:'Endurance',               author:'Alfred Lansing',     pages:300, read:false, tags:['led','ekspedicija','istinita priča','preživljavanje','more']},
+  {id:'sredis', title:'Put u središte Zemlje',   author:'Jules Verne',        pages:250, read:false, tags:['ekspedicija','klasik','znanost','avantura']},
+  {id:'deliv',  title:'Izbavljenje',             author:'James Dickey',       pages:250, read:false, tags:['rijeka','preživljavanje','mračno','moderno']},
+  {id:'heart',  title:'In the Heart of the Sea', author:'N. Philbrick',       pages:300, read:false, tags:['more','istinita priča','preživljavanje','brodolom']},
+
+  /* --- drugi i treći prsten: povezuju se tek preko gornjih --- */
+  {id:'kontiki',title:'Kon-Tiki',                author:'Thor Heyerdahl',     pages:240, read:false, tags:['more','ekspedicija','istinita priča','splav']},
+  {id:'slocum', title:'Sam oko svijeta',         author:'Joshua Slocum',      pages:250, read:false, tags:['more','sam protiv prirode','istinita priča','jedrenje']},
+  {id:'storm',  title:'Savršena oluja',          author:'Sebastian Junger',   pages:300, read:false, tags:['more','istinita priča','oluja','brodolom']},
+  {id:'moby',   title:'Moby Dick',               author:'Herman Melville',    pages:600, read:false, tags:['more','klasik','kitolov','mračno']},
+  {id:'crusoe', title:'Robinson Crusoe',         author:'Daniel Defoe',       pages:320, read:false, tags:['more','preživljavanje','klasik','otok']},
+  {id:'pijev',  title:'Pijev život',             author:'Yann Martel',        pages:350, read:false, tags:['more','preživljavanje','brodolom','moderno','otok']},
+  {id:'muhe',   title:'Gospodar muha',           author:'William Golding',    pages:200, read:false, tags:['otok','preživljavanje','mračno','klasik']},
+  {id:'worst',  title:'The Worst Journey in the World', author:'A. Cherry-Garrard', pages:600, read:false, tags:['led','ekspedicija','istinita priča','Antarktika']},
+  {id:'annap',  title:'Annapurna',               author:'Maurice Herzog',     pages:300, read:false, tags:['planine','ekspedicija','istinita priča','izdržljivost']},
+  {id:'leopard',title:'Snježni leopard',         author:'P. Matthiessen',     pages:300, read:false, tags:['planine','putovanje','istinita priča','meditativno']},
+  {id:'sands',  title:'Arabian Sands',           author:'Wilfred Thesiger',   pages:350, read:false, tags:['pustinja','putovanje','istinita priča','izdržljivost']},
+  {id:'gifts',  title:'Vrijeme darova',          author:'P. Leigh Fermor',    pages:280, read:false, tags:['putovanje','pješačenje','istinita priča','Europa']},
+  {id:'doubt',  title:'The River of Doubt',      author:'Candice Millard',    pages:350, read:false, tags:['rijeka','ekspedicija','istinita priča','džungla']},
+  {id:'dersu',  title:'Dersu Uzala',             author:'V. Arsenjev',        pages:250, read:false, tags:['divljina','tajga','istinita priča','putovanje']},
+  {id:'camac',  title:'Tri čovjeka u čamcu',     author:'Jerome K. Jerome',   pages:180, read:false, tags:['rijeka','klasik','humor','putovanje']},
+  {id:'mars',   title:'Marsovac',                author:'Andy Weir',          pages:400, read:false, tags:['preživljavanje','znanost','moderno','sam protiv prirode']},
+
+  /* --- MOSTOVI: dijele oznake s oba svijeta --- */
+  {id:'zeta',   title:'Izgubljeni grad Z',       author:'David Grann',        pages:350, read:false, tags:['ekspedicija','džungla','istinita priča','istraga','nestanak']},
+  {id:'smilla', title:'Smillin osjećaj za snijeg',author:'Peter Høeg',        pages:400, read:false, tags:['led','misterij','istraga','nordic noir','moderno']},
+  {id:'hladno', title:'Hladnokrvno',             author:'Truman Capote',      pages:350, read:false, tags:['zločin','istinita priča','novinarska istraga','suđenje']},
+  {id:'baskerv',title:'Baskervilleski pas',      author:'A. Conan Doyle',     pages:200, read:false, tags:['misterij','istraga','klasik','magla']},
+  {id:'rebecca',title:'Rebecca',                 author:'Daphne du Maurier',  pages:400, read:false, tags:['misterij','more','mračno','klasik']},
+  {id:'nijedan',title:'I ne osta nijedan',       author:'Agatha Christie',    pages:200, read:false, tags:['misterij','otok','zločin','klasik']},
+
+  /* --- ISTRAŽIVAČKI TRILER / MISTERIJ --- */
+  {id:'sokol',  title:'Malteški sokol',          author:'Dashiell Hammett',   pages:220, read:false, tags:['noir','istraga','zločin','klasik']},
+  {id:'dubok',  title:'Duboki san',              author:'Raymond Chandler',   pages:250, read:false, tags:['noir','istraga','zločin','klasik']},
+  {id:'ruze',   title:'Ime ruže',                author:'Umberto Eco',        pages:500, read:false, tags:['misterij','istraga','povijesno','klasik']},
+  {id:'krtica', title:'Krtica',                  author:'John le Carré',      pages:400, read:false, tags:['špijunaža','istraga','mračno','moderno']},
+  {id:'jaganj', title:'Kad jaganjci utihnu',     author:'Thomas Harris',      pages:350, read:false, tags:['triler','istraga','zločin','serijski ubojica','profiliranje','FBI']},
+  {id:'iscezla',title:'Iščezla',                 author:'Gillian Flynn',      pages:400, read:false, tags:['triler','zločin','moderno','nepouzdani pripovjedač']},
+  {id:'zmaj',   title:'Muškarci koji mrze žene', author:'Stieg Larsson',      pages:550, read:false, tags:['triler','istraga','hladni slučaj','nordic noir','moderno']},
+  {id:'mystic', title:'Mystic River',            author:'Dennis Lehane',      pages:400, read:false, tags:['zločin','policija','moderno','prijateljstvo']},
+  {id:'tajna',  title:'Tajna povijest',          author:'Donna Tartt',        pages:550, read:false, tags:['zločin','mračno','moderno','nepouzdani pripovjedač']},
+  {id:'cvjetni',title:'Ubojice cvjetnog mjeseca',author:'David Grann',        pages:350, read:false, tags:['zločin','istinita priča','istraga','novinarska istraga']},
+
+  /* --- ISTRAŽIVAČKO-POLICIJSKI I SERIJSKI UBOJICE --- */
+  {id:'crvzmaj',title:'Crveni zmaj',             author:'Thomas Harris',      pages:350, read:false, tags:['serijski ubojica','profiliranje','forenzika','triler']},
+  {id:'mind',   title:'Mindhunter',              author:'John Douglas',       pages:400, read:false, tags:['serijski ubojica','profiliranje','istinita priča','FBI']},
+  {id:'mraku',  title:'Ubit ću te u mraku',      author:'M. McNamara',        pages:350, read:false, tags:['serijski ubojica','hladni slučaj','istinita priča','novinarska istraga']},
+  {id:'zodiac', title:'Zodiac',                  author:'Robert Graysmith',   pages:400, read:false, tags:['serijski ubojica','istinita priča','novinarska istraga','šifre']},
+  {id:'davo',   title:'Đavo u bijelom gradu',    author:'Erik Larson',        pages:400, read:false, tags:['serijski ubojica','istinita priča','povijesno']},
+  {id:'helter', title:'Helter Skelter',          author:'Vincent Bugliosi',   pages:650, read:false, tags:['kult','istinita priča','suđenje','serijski ubojica']},
+  {id:'snjegov',title:'Snjegović',               author:'Jo Nesbø',           pages:450, read:false, tags:['serijski ubojica','policija','nordic noir','moderno']},
+  {id:'odjelq', title:'Žena u kavezu',           author:'J. Adler-Olsen',     pages:450, read:false, tags:['hladni slučaj','policija','nordic noir','otmica']},
+  {id:'pjesnik',title:'Pjesnik',                 author:'Michael Connelly',   pages:450, read:false, tags:['serijski ubojica','novinarska istraga','policija','moderno']},
+  {id:'jeka',   title:'Crna jeka',               author:'Michael Connelly',   pages:400, read:false, tags:['policija','istraga','moderno','veterani']},
+  {id:'dalija', title:'Crna dalija',             author:'James Ellroy',       pages:400, read:false, tags:['hladni slučaj','policija','noir','korupcija']},
+  {id:'laconf', title:'L.A. Confidential',       author:'James Ellroy',       pages:500, read:false, tags:['policija','korupcija','noir','povijesno']},
+  {id:'sumi',   title:'U šumi',                  author:'Tana French',        pages:450, read:false, tags:['policija','nestala osoba','istraga','moderno']},
+  {id:'alex',   title:'Alex',                    author:'Pierre Lemaitre',    pages:350, read:false, tags:['policija','otmica','triler','moderno']},
+  {id:'osumnj', title:'Odanost osumnjičenog X',  author:'Keigo Higashino',    pages:300, read:false, tags:['istraga','logička zagonetka','zločin','policija']},
+
+  /* --- KRATKI KLASICI --- */
+  {id:'obecanje',title:'Obećanje',                author:'F. Dürrenmatt',      pages:130, read:false, tags:['policija','istraga','zločin','klasik','mračno']},
+  {id:'dansove', title:'Dan sove',                author:'Leonardo Sciascia',  pages:130, read:false, tags:['mafija','istraga','policija','klasik']},
+  {id:'pietr',   title:'Pietr Latvijac',          author:'Georges Simenon',    pages:160, read:false, tags:['policija','istraga','klasik','noir']},
+  {id:'kcivrem', title:'Kći vremena',             author:'Josephine Tey',      pages:200, read:false, tags:['hladni slučaj','povijesno','logička zagonetka','klasik']},
+  {id:'mocvara', title:'Močvara',                 author:'A. Indriðason',      pages:280, read:false, tags:['hladni slučaj','policija','nordic noir','forenzika']},
+  {id:'crvvoda', title:'Crvena voda',             author:'Jurica Pavičić',     pages:350, read:false, tags:['nestala osoba','policija','obitelj','moderno']},
+  {id:'ripley',  title:'Talentirani g. Ripley',   author:'P. Highsmith',       pages:300, read:false, tags:['psihotriler','zločin','klasik','nepouzdani pripovjedač']},
+  {id:'susa',    title:'Suša',                    author:'Jane Harper',        pages:350, read:false, tags:['policija','istraga','mala sredina','moderno']},
+
+  /* --- NOVIJE, S NAGRADNIH LISTA --- */
+  {id:'deathus', title:'The Death of Us',         author:'Abigail Dean',       pages:350, read:false, tags:['triler','zločin','obitelj','moderno']},
+  {id:'ashes',   title:'King of Ashes',           author:'S. A. Cosby',        pages:400, read:false, tags:['zločin','obitelj','mračno','moderno']},
+  {id:'winterj', title:'The Winter Job',          author:'Antti Tuomainen',    pages:300, read:false, tags:['nordic noir','humor','zločin','moderno']},
+  {id:'cella',   title:'The Girl in Cell A',      author:'Vaseem Khan',        pages:400, read:false, tags:['hladni slučaj','istraga','moderno','nepouzdani pripovjedač']},
+  {id:'artlie',  title:'The Art of a Lie',        author:'L. Shepherd-Robinson',pages:400,read:false, tags:['povijesno','prijevara','zločin','moderno']},
+  {id:'godwood', title:'The God of the Woods',    author:'Liz Moore',          pages:480, read:false, tags:['nestala osoba','obitelj','istraga','moderno']},
+  {id:'incrowd', title:'The In Crowd',            author:'Charlotte Vassell',  pages:400, read:false, tags:['policija','zločin','humor','moderno']},
+  {id:'tainted', title:'The Tainted Cup',         author:'R. J. Bennett',      pages:430, read:false, tags:['logička zagonetka','fantastika','istraga']},
+  {id:'strange', title:'Strange Pictures',        author:'Uketsu',             pages:250, read:false, tags:['logička zagonetka','misterij','moderno']},
+  {id:'murderl', title:'Murderland',              author:'Caroline Fraser',    pages:480, read:false, tags:['serijski ubojica','istinita priča','novinarska istraga']},
+  {id:'deadmon', title:'Dead Money',              author:'Jakob Kerr',         pages:350, read:false, tags:['tehnologija','zločin','istraga','moderno']},
+
+  /* --- PSIHOTRILERI I FORENZIKA --- */
+  {id:'kostiju', title:'Sakupljač kostiju',       author:'Jeffery Deaver',     pages:400, read:true , tags:['forenzika','serijski ubojica','istraga','policija']},
+  {id:'ociju',   title:'Sakupljač očiju',         author:'Sebastian Fitzek',   pages:400, read:false, tags:['psihotriler','serijski ubojica','otmica','nepouzdani pripovjedač']},
+  {id:'terapija',title:'Terapija',                author:'Sebastian Fitzek',   pages:250, read:false, tags:['psihotriler','nestala osoba','nepouzdani pripovjedač']},
+  {id:'putnik23',title:'Putnik 23',               author:'Sebastian Fitzek',   pages:350, read:false, tags:['psihotriler','nestala osoba','more','moderno']},
+  {id:'raspeti', title:'Raspeti',                 author:'Chris Carter',       pages:400, read:false, tags:['serijski ubojica','policija','profiliranje','mračno']},
+  {id:'evilmind',title:'An Evil Mind',            author:'Chris Carter',       pages:400, read:false, tags:['serijski ubojica','profiliranje','FBI','mračno']},
+  {id:'lijepe',  title:'Lijepe djevojke',         author:'Karin Slaughter',    pages:400, read:false, tags:['serijski ubojica','obitelj','mračno','moderno']},
+  {id:'pticar',  title:'Ptičar',                  author:'Mo Hayder',          pages:350, read:false, tags:['serijski ubojica','policija','forenzika','mračno']},
+  {id:'blackout',title:'Blackout',                author:'Marc Elsberg',       pages:500, read:false, tags:['tehnologija','triler','preživljavanje','moderno']},
+
+  /* --- NAJPRODAVANIJI --- */
+  {id:'negovori',title:'Ne govori nikome',        author:'Harlan Coben',       pages:400, read:false, tags:['triler','nestala osoba','obitelj','moderno']},
+  {id:'vrijeme', title:'Vrijeme za ubijanje',     author:'John Grisham',       pages:500, read:false, tags:['sudski','zločin','obitelj','mračno']},
+  {id:'killingf',title:'Killing Floor',           author:'Lee Child',          pages:400, read:false, tags:['akcija','veterani','zločin','moderno']},
+  {id:'spider',  title:'Along Came a Spider',     author:'James Patterson',    pages:400, read:false, tags:['serijski ubojica','otmica','FBI','profiliranje']},
+
+  /* --- PROSIRENJE: 45 pustolovnih --- */
+  {id:'alive', title:'Alive', author:'Piers Paul Read', pages:320, read:false, tags:['preživljavanje','planine','istinita priča','led']},
+  {id:'ralston', title:'127 sati', author:'Aron Ralston', pages:350, read:false, tags:['preživljavanje','istinita priča','sam protiv prirode','pustinja']},
+  {id:'adrift', title:'Adrift', author:'Steven Callahan', pages:300, read:false, tags:['more','preživljavanje','istinita priča','brodolom']},
+  {id:'longwalk', title:'Dugi marš', author:'Sławomir Rawicz', pages:300, read:false, tags:['bijeg','pješačenje','istinita priča','izdržljivost']},
+  {id:'worsley', title:'Shackletonovo putovanje čamcem', author:'Frank Worsley', pages:250, read:false, tags:['led','more','ekspedicija','istinita priča']},
+  {id:'nansen', title:'Najdalji sjever', author:'Fridtjof Nansen', pages:550, read:false, tags:['led','ekspedicija','istinita priča','Arktik']},
+  {id:'dana', title:'Dvije godine pod jarbolom', author:'R. H. Dana', pages:400, read:false, tags:['more','jedrenje','istinita priča','klasik']},
+  {id:'seawolf', title:'Morski vuk', author:'Jack London', pages:350, read:false, tags:['more','klasik','jedrenje','brutalnost']},
+  {id:'riddle', title:'Zagonetka pijeska', author:'Erskine Childers', pages:300, read:false, tags:['more','špijunaža','klasik','jedrenje']},
+  {id:'papillon', title:'Papillon', author:'Henri Charrière', pages:550, read:false, tags:['bijeg','zatvor','istinita priča','džungla']},
+  {id:'otet', title:'Otet', author:'R. L. Stevenson', pages:250, read:false, tags:['bijeg','klasik','pustolovina','Škotska']},
+  {id:'salomon', title:'Rudnici kralja Salomona', author:'H. R. Haggard', pages:250, read:false, tags:['ekspedicija','klasik','Afrika','pustolovina']},
+  {id:'ona', title:'Ona', author:'H. R. Haggard', pages:300, read:false, tags:['ekspedicija','klasik','Afrika','misterij']},
+  {id:'80dana', title:'Put oko svijeta u 80 dana', author:'Jules Verne', pages:250, read:false, tags:['putovanje','klasik','utrka','humor']},
+  {id:'20000', title:'20.000 milja pod morem', author:'Jules Verne', pages:400, read:false, tags:['more','klasik','znanost','ekspedicija']},
+  {id:'tajnotok', title:'Tajanstveni otok', author:'Jules Verne', pages:600, read:false, tags:['otok','preživljavanje','klasik','znanost']},
+  {id:'svicarski', title:'Švicarski Robinson', author:'J. D. Wyss', pages:400, read:false, tags:['otok','preživljavanje','klasik','obitelj']},
+  {id:'sjekira', title:'Sjekira', author:'Gary Paulsen', pages:180, read:false, tags:['divljina','preživljavanje','sam protiv prirode']},
+  {id:'mojastrana', title:'Moja strana planine', author:'Jean C. George', pages:180, read:false, tags:['divljina','preživljavanje','sam protiv prirode']},
+  {id:'walden', title:'Walden', author:'H. D. Thoreau', pages:350, read:false, tags:['divljina','meditativno','klasik']},
+  {id:'desert', title:'Desert Solitaire', author:'Edward Abbey', pages:300, read:false, tags:['pustinja','meditativno','istinita priča']},
+  {id:'bryson', title:'Šetnja šumom', author:'Bill Bryson', pages:300, read:false, tags:['pješačenje','humor','istinita priča']},
+  {id:'divlja', title:'Divlja', author:'Cheryl Strayed', pages:350, read:false, tags:['pješačenje','istinita priča','moderno','sam protiv prirode']},
+  {id:'tracks', title:'Tragovi', author:'Robyn Davidson', pages:250, read:false, tags:['pustinja','sam protiv prirode','istinita priča']},
+  {id:'stewart', title:'Mjesta između', author:'Rory Stewart', pages:300, read:false, tags:['pješačenje','putovanje','istinita priča','planine']},
+  {id:'tibet', title:'Sedam godina na Tibetu', author:'Heinrich Harrer', pages:350, read:false, tags:['planine','bijeg','istinita priča','putovanje']},
+  {id:'silence', title:'Into the Silence', author:'Wade Davis', pages:500, read:false, tags:['planine','ekspedicija','istinita priča','povijesno']},
+  {id:'climb', title:'Uspon', author:'Anatolij Bukrejev', pages:300, read:false, tags:['planine','ekspedicija','istinita priča']},
+  {id:'viesturs', title:'No Shortcuts to the Top', author:'Ed Viesturs', pages:350, read:false, tags:['planine','izdržljivost','istinita priča']},
+  {id:'deepsurv', title:'Deep Survival', author:'Laurence Gonzales', pages:300, read:false, tags:['preživljavanje','znanost','istinita priča']},
+  {id:'isaac', title:'Isaacova oluja', author:'Erik Larson', pages:300, read:false, tags:['oluja','istinita priča','povijesno','more']},
+  {id:'zahara', title:'Kosturi Zahare', author:'Dean King', pages:350, read:false, tags:['pustinja','brodolom','preživljavanje','istinita priča']},
+  {id:'greene', title:'Putovanje bez karata', author:'Graham Greene', pages:250, read:false, tags:['putovanje','Afrika','istinita priča']},
+  {id:'bazaar', title:'Veliki željeznički bazar', author:'Paul Theroux', pages:350, read:false, tags:['putovanje','vlak','istinita priča']},
+  {id:'patagonia', title:'U Patagoniji', author:'Bruce Chatwin', pages:250, read:false, tags:['putovanje','istinita priča','meditativno']},
+  {id:'songlines', title:'Pjesme staza', author:'Bruce Chatwin', pages:300, read:false, tags:['putovanje','pustinja','meditativno']},
+  {id:'emerald', title:'The Emerald Mile', author:'Kevin Fedarko', pages:400, read:false, tags:['rijeka','ekspedicija','istinita priča']},
+  {id:'wager', title:'Wager', author:'David Grann', pages:350, read:false, tags:['more','brodolom','istinita priča','suđenje']},
+  {id:'whitedark', title:'Bijela tama', author:'David Grann', pages:150, read:false, tags:['led','Antarktika','sam protiv prirode','istinita priča']},
+  {id:'mutiny', title:'Pobuna na Bountyju', author:'Nordhoff i Hall', pages:400, read:false, tags:['more','pobuna','klasik','jedrenje']},
+  {id:'shipofgold', title:'Ship of Gold', author:'Gary Kinder', pages:450, read:false, tags:['more','brodolom','blago','istinita priča']},
+  {id:'endurance2', title:'Antarktički dnevnik', author:'Robert F. Scott', pages:400, read:false, tags:['led','Antarktika','ekspedicija','istinita priča']},
+  {id:'river', title:'Rijeka sumnje', author:'Buddy Levy', pages:350, read:false, tags:['rijeka','džungla','ekspedicija','istinita priča']},
+  {id:'darkwater', title:'Tamna voda', author:'Robert Stone', pages:400, read:false, tags:['more','jedrenje','mračno','moderno']},
+  {id:'kalahari', title:'Cry of the Kalahari', author:'Owens', pages:350, read:false, tags:['pustinja','divljina','istinita priča','Afrika']},
+
+  /* --- PROSIRENJE: 62 krimi --- */
+  {id:'crvendac', title:'Crvendać', author:'Jo Nesbø', pages:500, read:false, tags:['policija','nordic noir','povijesno','moderno']},
+  {id:'lackberg', title:'Ledena princeza', author:'Camilla Läckberg', pages:400, read:false, tags:['policija','nordic noir','obitelj','moderno']},
+  {id:'mankell', title:'Ubojice bez lica', author:'Henning Mankell', pages:350, read:false, tags:['policija','nordic noir','istraga']},
+  {id:'roseanna', title:'Roseanna', author:'Sjöwall i Wahlöö', pages:250, read:false, tags:['policija','nordic noir','hladni slučaj','klasik']},
+  {id:'fossum', title:'Ne osvrći se', author:'Karin Fossum', pages:300, read:false, tags:['policija','nordic noir','mala sredina']},
+  {id:'nesser', title:'Mind\u2019s Eye', author:'Håkan Nesser', pages:300, read:false, tags:['policija','nordic noir','logička zagonetka']},
+  {id:'kepler', title:'Hipnotizer', author:'Lars Kepler', pages:500, read:false, tags:['serijski ubojica','policija','nordic noir']},
+  {id:'grave', title:'Tišina groba', author:'A. Indriðason', pages:300, read:false, tags:['hladni slučaj','policija','nordic noir','obitelj']},
+  {id:'pdjames', title:'Pokrijte joj lice', author:'P. D. James', pages:250, read:false, tags:['policija','logička zagonetka','klasik','obitelj']},
+  {id:'rendell', title:'Presuda od kamena', author:'Ruth Rendell', pages:200, read:false, tags:['psihotriler','zločin','klasik','obitelj']},
+  {id:'dexter', title:'Zadnji autobus za Woodstock', author:'Colin Dexter', pages:250, read:false, tags:['policija','logička zagonetka','istraga']},
+  {id:'rebus', title:'Čvorovi i križevi', author:'Ian Rankin', pages:250, read:false, tags:['policija','serijski ubojica','istraga','mračno']},
+  {id:'mcdermid', title:'Pjev sirena', author:'Val McDermid', pages:400, read:false, tags:['serijski ubojica','profiliranje','mračno']},
+  {id:'garnethill', title:'Garnethill', author:'Denise Mina', pages:300, read:false, tags:['zločin','mračno','moderno','istraga']},
+  {id:'atkinson', title:'Slučajevi iz prošlosti', author:'Kate Atkinson', pages:350, read:false, tags:['hladni slučaj','obitelj','istraga','moderno']},
+  {id:'bauer', title:'Blacklands', author:'Belinda Bauer', pages:250, read:false, tags:['serijski ubojica','hladni slučaj','obitelj']},
+  {id:'magpie', title:'Ubojstva svraka', author:'Anthony Horowitz', pages:450, read:false, tags:['logička zagonetka','misterij','moderno','humor']},
+  {id:'kukavicji', title:'Kukavičji zov', author:'Robert Galbraith', pages:450, read:false, tags:['istraga','zločin','moderno','veterani']},
+  {id:'griffiths', title:'Mjesta prijelaza', author:'Elly Griffiths', pages:300, read:false, tags:['forenzika','hladni slučaj','policija','moderno']},
+  {id:'redharvest', title:'Krvava žetva', author:'Dashiell Hammett', pages:200, read:false, tags:['noir','korupcija','zločin','klasik']},
+  {id:'farewell', title:'Zbogom, dušo', author:'Raymond Chandler', pages:300, read:false, tags:['noir','istraga','zločin','klasik']},
+  {id:'chill', title:'Jeza', author:'Ross Macdonald', pages:250, read:false, tags:['noir','obitelj','istraga','klasik']},
+  {id:'postman', title:'Poštar uvijek zvoni dvaput', author:'James M. Cain', pages:120, read:false, tags:['noir','zločin','klasik','psihotriler']},
+  {id:'killerinside', title:'Ubojica u meni', author:'Jim Thompson', pages:200, read:false, tags:['psihotriler','nepouzdani pripovjedač','noir','klasik']},
+  {id:'getshorty', title:'Get Shorty', author:'Elmore Leonard', pages:300, read:false, tags:['zločin','humor','moderno','mafija']},
+  {id:'mosley', title:'Đavo u plavoj haljini', author:'Walter Mosley', pages:250, read:false, tags:['noir','istraga','povijesno','moderno']},
+  {id:'bluebird', title:'Bluebird, Bluebird', author:'Attica Locke', pages:300, read:false, tags:['policija','zločin','mala sredina','moderno']},
+  {id:'powerdog', title:'Moć psa', author:'Don Winslow', pages:550, read:false, tags:['mafija','korupcija','policija','mračno']},
+  {id:'neonrain', title:'Neonska kiša', author:'James Lee Burke', pages:300, read:false, tags:['policija','korupcija','noir','veterani']},
+  {id:'postmortem', title:'Postmortem', author:'Patricia Cornwell', pages:350, read:false, tags:['forenzika','serijski ubojica','policija']},
+  {id:'dejadead', title:'Déjà Dead', author:'Kathy Reichs', pages:400, read:false, tags:['forenzika','serijski ubojica','istraga','moderno']},
+  {id:'coffin', title:'Plesač u lijesu', author:'Jeffery Deaver', pages:400, read:false, tags:['forenzika','istraga','policija','triler']},
+  {id:'surgeon', title:'Kirurg', author:'Tess Gerritsen', pages:350, read:false, tags:['serijski ubojica','forenzika','policija','triler']},
+  {id:'rulesprey', title:'Rules of Prey', author:'John Sandford', pages:350, read:false, tags:['serijski ubojica','policija','triler']},
+  {id:'sharp', title:'Oštri predmeti', author:'Gillian Flynn', pages:250, read:false, tags:['obitelj','mračno','novinarska istraga','moderno']},
+  {id:'vlak', title:'Djevojka u vlaku', author:'Paula Hawkins', pages:350, read:false, tags:['psihotriler','nepouzdani pripovjedač','nestala osoba','moderno']},
+  {id:'sutljiva', title:'Šutljiva pacijentica', author:'Alex Michaelides', pages:350, read:false, tags:['psihotriler','nepouzdani pripovjedač','moderno']},
+  {id:'evelyn', title:'Sedam smrti Evelyn Hardcastle', author:'Stuart Turton', pages:450, read:false, tags:['logička zagonetka','misterij','moderno']},
+  {id:'ackroyd', title:'Ubojstvo Rogera Ackroyda', author:'Agatha Christie', pages:250, read:false, tags:['logička zagonetka','nepouzdani pripovjedač','klasik','misterij']},
+  {id:'orient', title:'Ubojstvo u Orient Expressu', author:'Agatha Christie', pages:250, read:false, tags:['logička zagonetka','vlak','klasik','misterij']},
+  {id:'cetvorice', title:'Znak četvorice', author:'A. Conan Doyle', pages:200, read:false, tags:['misterij','istraga','klasik','blago']},
+  {id:'morgue', title:'Ubojstva u ulici Morgue', author:'E. A. Poe', pages:60, read:false, tags:['logička zagonetka','istraga','klasik','misterij']},
+  {id:'bijela', title:'Žena u bijelom', author:'Wilkie Collins', pages:600, read:false, tags:['misterij','gotika','klasik','prijevara']},
+  {id:'mjesecev', title:'Mjesečev kamen', author:'Wilkie Collins', pages:500, read:false, tags:['misterij','istraga','klasik','blago']},
+  {id:'brown', title:'Nevinost oca Browna', author:'G. K. Chesterton', pages:250, read:false, tags:['logička zagonetka','misterij','klasik']},
+  {id:'gaudy', title:'Gaudy Night', author:'Dorothy L. Sayers', pages:500, read:false, tags:['misterij','istraga','klasik','fakultet']},
+  {id:'vargas', title:'Čovjek kredom', author:'Fred Vargas', pages:300, read:false, tags:['policija','serijski ubojica','misterij','moderno']},
+  {id:'camilleri', title:'Oblik vode', author:'Andrea Camilleri', pages:220, read:false, tags:['policija','mafija','korupcija','humor']},
+  {id:'malice', title:'Zloba', author:'Keigo Higashino', pages:280, read:false, tags:['logička zagonetka','nepouzdani pripovjedač','istraga','policija']},
+  {id:'out', title:'Out', author:'Natsuo Kirino', pages:500, read:false, tags:['zločin','mračno','obitelj','moderno']},
+  {id:'imanishi', title:'Inspektor Imanishi istražuje', author:'Seicho Matsumoto', pages:300, read:false, tags:['policija','hladni slučaj','istraga','klasik']},
+  {id:'azazel', title:'Azazel', author:'Boris Akunin', pages:250, read:false, tags:['istraga','povijesno','misterij','špijunaža']},
+  {id:'annrule', title:'Stranac pored mene', author:'Ann Rule', pages:400, read:false, tags:['serijski ubojica','istinita priča','suđenje']},
+  {id:'berendt', title:'Ponoć u vrtu dobra i zla', author:'John Berendt', pages:400, read:false, tags:['zločin','istinita priča','suđenje','mala sredina']},
+  {id:'homicide', title:'Homicide', author:'David Simon', pages:600, read:false, tags:['policija','istinita priča','novinarska istraga']},
+  {id:'spywho', title:'Špijun koji je došao s hladnoće', author:'John le Carré', pages:250, read:false, tags:['špijunaža','mračno','klasik','izdaja']},
+  {id:'thirdman', title:'Treći čovjek', author:'Graham Greene', pages:150, read:false, tags:['špijunaža','istraga','klasik','izdaja']},
+  {id:'dimitrios', title:'Maska Dimitriosa', author:'Eric Ambler', pages:250, read:false, tags:['špijunaža','istraga','klasik','prijevara']},
+  {id:'sakal', title:'Dan Šakala', author:'Frederick Forsyth', pages:400, read:false, tags:['špijunaža','atentat','triler','klasik']},
+  {id:'fatherland', title:'Fatherland', author:'Robert Harris', pages:350, read:false, tags:['policija','povijesno','špijunaža','istraga']},
+  {id:'firma', title:'Firma', author:'John Grisham', pages:450, read:false, tags:['sudski','korupcija','triler','moderno']},
+  {id:'turow', title:'Pretpostavljena nevinost', author:'Scott Turow', pages:450, read:false, tags:['sudski','zločin','istraga','moderno']}
+];
+
+/* --------------------------------------------------------------
+   ZANROVSKA SIDRA. Namjerno NISU dio BOOKS: ne ulaze u PAIRS, nemaju
+   slicnost, ne mogu biti preporuka i ne broje se u statistici.
+   Sluze samo da razvuku mapu i oboje cvorove.
+-------------------------------------------------------------- */
+const CRIME_IDS = new Set(['sokol', 'dubok', 'ruze', 'krtica', 'jaganj', 'iscezla', 'zmaj', 'mystic', 'tajna', 'cvjetni', 'hladno', 'nijedan', 'baskerv', 'rebecca', 'smilla', 'crvzmaj', 'mind', 'mraku', 'zodiac', 'davo', 'helter', 'snjegov', 'odjelq', 'pjesnik', 'jeka', 'dalija', 'laconf', 'sumi', 'alex', 'osumnj', 'obecanje', 'dansove', 'pietr', 'kcivrem', 'mocvara', 'crvvoda', 'ripley', 'susa', 'deathus', 'ashes', 'winterj', 'cella', 'artlie', 'godwood', 'incrowd', 'tainted', 'strange', 'murderl', 'deadmon', 'kostiju', 'ociju', 'terapija', 'putnik23', 'raspeti', 'evilmind', 'lijepe', 'pticar', 'blackout', 'negovori', 'vrijeme', 'killingf', 'spider', 'crvendac', 'lackberg', 'mankell', 'roseanna', 'fossum', 'nesser', 'kepler', 'grave', 'pdjames', 'rendell', 'dexter', 'rebus', 'mcdermid', 'garnethill', 'atkinson', 'bauer', 'magpie', 'kukavicji', 'griffiths', 'redharvest', 'farewell', 'chill', 'postman', 'killerinside', 'getshorty', 'mosley', 'bluebird', 'powerdog', 'neonrain', 'postmortem', 'dejadead', 'coffin', 'surgeon', 'rulesprey', 'sharp', 'vlak', 'sutljiva', 'evelyn', 'ackroyd', 'orient', 'cetvorice', 'morgue', 'bijela', 'mjesecev', 'brown', 'gaudy', 'vargas', 'camilleri', 'malice', 'out', 'imanishi', 'azazel', 'annrule', 'berendt', 'homicide', 'spywho', 'thirdman', 'dimitrios', 'sakal', 'fatherland', 'firma', 'turow']);
+BOOKS.forEach(b => b.genre = CRIME_IDS.has(b.id) ? 'crime' : 'adv');
+
+const HUBS = [
+  {id:'__adv',   title:'PUSTOLOVINA',      hub:true, genre:'adv',   pages:0, read:false, tags:[]},
+  {id:'__crime', title:'KRIMI I ISTRAGA',  hub:true, genre:'crime', pages:0, read:false, tags:[]}
+];
+
+/* Ukljuceni zanrovi. Ovo je filtar POGLEDA, ne podataka: PAIRS i
+   toplina se i dalje racunaju nad svime, pa gasenje zanra ne mijenja
+   preporuke unutar onoga sto je ostalo vidljivo. */
+const genreOn = {adv: true, crime: true};
+const bothOn = () => genreOn.adv && genreOn.crime;
+const GCOL = {adv:'#8b6cef', crime:'#4ec9b0'};
+const col = d => GCOL[d.genre];
+const hexa = (h, a) => {
+  const n = parseInt(h.slice(1), 16);
+  return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a.toFixed(2)})`;
+};
+
+/* ------------------------------------------------------------------
+   2. SLIČNOST  ←  OVO JE JEDINA FUNKCIJA KOJU MIJENJAŠ
+   Sada: Jaccard nad tagovima. Kasnije: kosinusna sličnost embeddinga.
+   Potpis ostaje isti pa ostatak koda ne dira.
+------------------------------------------------------------------ */
+function similarity(a, b){
+  const A = new Set(a.tags), B = new Set(b.tags);
+  let inter = 0;
+  A.forEach(t => { if (B.has(t)) inter++; });
+  return inter / (A.size + B.size - inter);
+}
+
+/* Sve parove izračunaj jednom. Kod embeddinga isto — cacheaj rezultat. */
+const PAIRS = [];
+for (let i = 0; i < BOOKS.length; i++)
+  for (let j = i + 1; j < BOOKS.length; j++){
+    const w = similarity(BOOKS[i], BOOKS[j]);
+    if (w > 0) PAIRS.push({source: BOOKS[i].id, target: BOOKS[j].id, w});
+  }
+
+/* Rezultat preporuke = zbroj sličnosti prema pročitanima. */
+function score(book){
+  if (book.read) return 0;
+  return PAIRS
+    .filter(p => (p.source === book.id || p.target === book.id))
+    .map(p => byId(p.source === book.id ? p.target : p.source))
+    .filter(o => o.read)
+    .reduce((s, o) => s + similarity(book, o), 0);
+}
+function contributors(book){
+  const all = PAIRS
+    .filter(p => p.source === book.id || p.target === book.id)
+    .map(p => ({book: byId(p.source === book.id ? p.target : p.source), w: p.w}))
+    .sort((a, b) => b.w - a.w);
+  const fromRead = all.filter(x => x.book.read);
+  /* Ako knjiga još nema nijednu pročitanu susjedu, pokaži put do nje. */
+  return {rows: (book.read || fromRead.length ? (book.read ? all : fromRead) : all).slice(0, 4),
+          onHorizon: !book.read && fromRead.length === 0};
+}
+const byId = id => BOOKS.find(b => b.id === id);
+
+/* Tri stanja čvora. Horizont = još nije povezan ni s čim pročitanim. */
+function tier(d){
+  if (d.hub) return 'hub';
+  if (d.read) return 'read';
+  return score(d) > 0 ? 'suggested' : 'horizon';
+}
+
+/* ------------------------------------------------------------------
+   3. CRTANJE
+------------------------------------------------------------------ */
+const svg = d3.select('#graph');
+/* Zoom i pomicanje. Sve se crta u 'root', transform ide na njega. */
+const root = svg.append('g');
+const zoom = d3.zoom().scaleExtent([0.15, 4])
+  /* Eksplicitan extent: SVG je dimenzioniran preko CSS-a, pa se ne
+     oslanjamo na sirinu/visinu iz atributa koje element nema. */
+  .extent(() => [[0, 0], [W, H]])
+  .on('zoom', e => { root.attr('transform', e.transform); scaleLabels(e.transform.k); });
+svg.call(zoom).on('dblclick.zoom', null);
+
+/* Natpisi se protuskaliraju pa zadrze istu velicinu na ekranu bez
+   obzira na zoom; potezi su non-scaling-stroke, dakle uvijek ostri. */
+function scaleLabels(k){
+  /* Jedino mjesto koje dira font-size. Prije je i update-blok postavljao
+     velicinu unutar prijelaza pa je gasio ovu vrijednost. */
+  gNodes.selectAll('text').style('font-size', d => ((d.hub ? 12 : 10.5) / k).toFixed(2) + 'px');
+}
+/* Sloj koji nosi vrlo blagu trajnu rotaciju. Odvojen od 'root' jer
+   root drzi zoom transform, a dvije transformacije na istoj grupi bi
+   se tukle. */
+const gRot = root.append('g');
+const gBands = gRot.append('g').attr('class', 'band');
+const gHub = gRot.append('g');
+const gLinks = gRot.append('g');
+const gNodes = gRot.append('g');
+
+let driftOn = true;
+
+/* Svaki cvor kruzi oko svoje pozicije, umjesto da se vrti cijela mapa.
+   Polumjer 1.4-3.8px, period 18-40s, faza nasumicna po cvoru - pa nema
+   zajednickog ritma i mapa djeluje ziva a ne kao da se ljulja u komadu.
+   Procitane (utezi) idu na pola amplitude, sidra miruju. */
+let orbT = 0;
+function initOrbits(){
+  let seed = 20260907;
+  const r = () => (seed = seed * 1664525 + 1013904223 >>> 0) / 4294967296;
+  nodes.forEach(n => {
+    /* Vrsna brzina = polumjer * 2pi / period. S 4.5-11px i 7-16s to je
+       3-6 px/s. Prijasnjih 1.4-3.8px na 18-40s davalo je 0.5 px/s, sto
+       je ispod praga na kojem oko uopce vidi gibanje (~2 px/s). */
+    n.or = n.hub ? 0 : (4.5 + r() * 6.5) * (n.read ? 0.55 : 1);
+    n.ow = Math.PI * 2 / (7000 + r() * 9000);
+    n.op = r() * Math.PI * 2;
+    n.oe = 0.55 + r() * 0.5;          /* spljostenost putanje */
+  });
+}
+/* Ne zovemo ovdje: 'nodes' jos ne postoji (temporal dead zone).
+   rebuild() poziva initOrbits() nakon svake promjene skupa cvorova. */
+const ox = d => d.or ? Math.cos(d.op + orbT * d.ow) * d.or : 0;
+const oy = d => d.or ? Math.sin(d.op + orbT * d.ow) * d.or * d.oe : 0;
+
+d3.timer(t => {
+  if (!motionOK || !driftOn) return;
+  orbT = t;
+  renderPositions();
+});
+const canvasEl = document.querySelector('.canvas');
+let W = canvasEl.clientWidth, H = canvasEl.clientHeight;
+
+/* NE kopiramo: traka i preporuke prosljeduju objekte iz BOOKS, pa bi
+   kopije znacile da se "procitano" mijenja na jednom objektu, a crta
+   iz drugog. d3 dopisuje x/y/vx/vy izravno na ove objekte. */
+const nodes = BOOKS.concat(HUBS);
+let visHub = [];
+const hublinks = BOOKS.map(b => ({source: b.id, target: b.genre === 'adv' ? '__adv' : '__crime'}));
+let links = [];
+let selected = null;
+let threshold = 0.2, maxPages = 700;
+
+const radius = d => d.hub ? 17 : 6 + d.pages / 42;
+const motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let MAX = 0.001;
+let CX = W / 2, CY = H / 2;
+
+/* 0 = na horizontu, 1 = pročitano. Sve vizualno visi o ovome. */
+const heat = d => d.read ? 1 : Math.min(1, score(d) / MAX);
+
+/* Visina u ljestvici: procitano dolje, horizont gore. Mora biti
+   definirano prije simulacije jer sila 'ladder' odmah zove akcesor. */
+const SPAN = 760;
+function yFor(d){ return CY + SPAN / 2 - (1 - heat(d)) * SPAN; }
+
+const sim = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink([]).id(d => d.id).distance(l => 190 - l.w * 150).strength(l => l.w * 1.3))
+  .force('charge', d3.forceManyBody().strength(-300))
+  /* Što knjiga bolje pristaje, to je bliže sredini. Horizont ostaje vani. */
+  .force('hub', d3.forceLink(hublinks).id(d => d.id).distance(230).strength(0.045))
+  .force('genre', d3.forceX(d => CX + (d.genre === 'adv' ? -230 : 230)).strength(0.055))
+  .force('ladder', d3.forceY(d => yFor(d)).strength(0))
+  .force('collide', d3.forceCollide(d => radius(d) + 24));
+
+
+/* --------------------------------------------------------------
+   RASPORED. Dva nacina, ista varijabla (toplina) - zato se
+   iskljucuju: ljestvica je vuce po Y, radijalno po polumjeru.
+-------------------------------------------------------------- */
+let layout = 'ladder';
+
+
+
+/* a = koliko jako protresti simulaciju. Promjena sirine platna ne
+   smije ponovno slagati cijelu mapu kao promjena rasporeda. */
+function applyLayout(a = 0.6){
+  const lad = true;
+  sim.force('ladder').strength(0.42);
+  sim.force('genre').strength(0.11);
+  sim.force('charge').strength(-180);
+
+  /* Sidra su u ljestvici zaglavlja stupaca, ne slobodni cvorovi. */
+  nodes.filter(n => n.hub).forEach(n => {
+    if (lad){ n.fx = CX + (bothOn() ? (n.genre === 'adv' ? -230 : 230) : 0); n.fy = CY - SPAN / 2 - 60; }
+    else { n.fx = n.fy = null; }
+  });
+
+  /* Utezi u slojevima: rang po redoslijedu citanja UNUTAR zanra.
+     Prva procitana je na dnu, druga 24px vise, i tako dalje. Nakon
+     desetog sloja se zbija da stup ne preraste mapu. */
+  const BOT = CY + SPAN / 2;
+  ['adv', 'crime'].forEach(g => {
+    const r = nodes.filter(n => !n.hub && n.read && n.genre === g)
+                   .sort((a, b) => (a.seq || 0) - (b.seq || 0));
+    r.forEach((n, i) => { n.fy = lad ? BOT - (i < 10 ? i * 24 : 240 + (i - 10) * 9) : null; });
+  });
+  nodes.filter(n => !n.hub && !n.read).forEach(n => { n.fy = null; });
+
+  gBands.selectAll('rect').remove();
+
+  if (a > 0) sim.alpha(Math.max(sim.alpha(), a)).restart();
+}
+
+
+
+/* Namjesti pogled tako da sve stane. */
+function fit(ms){
+  const vis = nodes.filter(visible).filter(n => n.x != null);
+  if (!vis.length) return;
+  const xs = vis.map(n => n.x), ys = vis.map(n => n.y);
+  const x0 = Math.min(...xs) - 60, x1 = Math.max(...xs) + 60;
+  const y0 = Math.min(...ys) - 60, y1 = Math.max(...ys) + 60;
+  const k = Math.min(W / (x1 - x0), H / (y1 - y0), 2);
+  svg.transition().duration(ms === 0 ? 0 : (motionOK ? 500 : 0)).call(zoom.transform,
+    d3.zoomIdentity.translate(W / 2, H / 2).scale(k).translate(-(x0 + x1) / 2, -(y0 + y1) / 2));
+}
+document.getElementById('fit').onclick = () => fit();
+
+/* --------------------------------------------------------------
+   OTKRIVANJE. Mapa se ne prikazuje cijela: svaka procitana knjiga
+   otkriva svojih K najslicnijih. Sve ostalo ne postoji na ekranu.
+   Skup se izvodi iz stanja, ne pamti se - pa ako maknes oznaku
+   "procitano", ono sto je ta knjiga otkrila opet nestaje.
+-------------------------------------------------------------- */
+let K = 5;
+/* Redoslijed citanja. Prva procitana tone najdublje - ona je razlog
+   zasto taj stupac uopce postoji. Svaka sljedeca sjeda sloj vise. */
+let readSeq = 0;
+BOOKS.filter(b => b.read).forEach(b => b.seq = ++readSeq);
+const isEntry = d => {
+  if (!d.read || d.hub) return false;
+  const first = BOOKS.filter(b => b.read && b.genre === d.genre)
+                     .sort((a, b) => a.seq - b.seq)[0];
+  return first && first.id === d.id;
+};
+const forced = new Set();          /* rucno otkriveno gumbom Istrazi */
+let discovered = new Set();
+let shadow = new Set();            /* stvarne knjige, ali bez podataka */
+/* Naslov nose samo procitane, tri najtoplija prijedloga i odabir.
+   Sve ostalo dobiva ime tek na hover - inace se pri 50+ cvorova
+   natpisi preklapaju u kasu. */
+let topLabels = new Set();
+function labelOn(d){
+  if (d.hub || d.read) return true;
+  if (isUnknown(d)) return false;
+  return topLabels.has(d.id);
+}
+const isUnknown = d => !d.hub && !discovered.has(d.id) && shadow.has(d.id);
+
+function recomputeDiscovered(){
+  const out = new Set(forced);
+  const read = BOOKS.filter(b => b.read);
+  read.forEach(b => out.add(b.id));
+  read.forEach(b => {
+    PAIRS.filter(p => p.source === b.id || p.target === b.id)
+      .map(p => ({id: p.source === b.id ? p.target : p.source, w: p.w}))
+      .sort((x, y) => y.w - x.w)
+      .slice(0, K)
+      .forEach(x => out.add(x.id));
+  });
+  /* Ako nista nije procitano, ponudi nekoliko cvorista kao pocetak. */
+  if (!out.size){
+    const deg = {};
+    PAIRS.forEach(p => { deg[p.source] = (deg[p.source] || 0) + 1; deg[p.target] = (deg[p.target] || 0) + 1; });
+    Object.entries(deg).sort((a, b) => b[1] - a[1]).slice(0, 6).forEach(([id]) => out.add(id));
+  }
+  discovered = out;
+
+  /* Frontiera: sve sto je jednu vezu udaljeno od otkrivenog. Prikazuje
+     se kao krug i linija bez naslova - postoji, ali ne znas sto je. */
+  const sh = new Set();
+  PAIRS.forEach(p => {
+    if (p.w < threshold) return;
+    if (out.has(p.source) && !out.has(p.target)) sh.add(p.target);
+    if (out.has(p.target) && !out.has(p.source)) sh.add(p.source);
+  });
+  shadow = sh;
+}
+recomputeDiscovered();
+
+function visible(d){ return genreOn[d.genre] && (d.hub || ((discovered.has(d.id) || shadow.has(d.id)) && d.pages <= maxPages)); }
+
+function rebuild(){
+  const vis = new Set(nodes.filter(visible).map(d => d.id));
+  links = PAIRS
+    .filter(p => p.w >= threshold && vis.has(p.source.id || p.source) && vis.has(p.target.id || p.target))
+    .map(p => ({source: p.source.id || p.source, target: p.target.id || p.target, w: p.w}));
+
+  visHub = hublinks.filter(l => {
+    const b = byId(l.source.id || l.source);
+    return b && visible(b) && genreOn[b.genre];
+  });
+  gHub.selectAll('line')
+    .data(visHub, d => (d.source.id || d.source))
+    .join('line')
+      .attr('stroke', '#8e8e8e').attr('stroke-width', 0.5)
+      .attr('stroke-dasharray', '2 6').attr('stroke-opacity', 0.28);
+
+  const edge = gLinks.selectAll('g.edge')
+    .data(links, d => (d.source.id || d.source) + '-' + (d.target.id || d.target))
+    .join(enter => {
+      const g = enter.append('g').attr('class', 'edge');
+      g.append('line').attr('class', 'vis');
+      /* Nevidljiva deblja linija samo zato da se u brid da kliknuti. */
+      g.append('line').attr('class', 'hit').attr('stroke-width', 14);
+      g.append('text').attr('class', 'lbl').attr('text-anchor', 'middle');
+      g.on('click', (e, d) => { e.stopPropagation(); selectEdge(d); })
+       .on('mouseenter', (e, d) => hoverEdge(d))
+       .on('mouseleave', () => hoverEdge(null));
+      return g;
+    });
+
+  const isBridge = d => byId(d.source.id || d.source).genre !== byId(d.target.id || d.target).genre;
+  /* Apsolutne vrijednosti Jaccarda zive u uskom pojasu (0.2-0.6), pa
+     debljina po njima ne razlikuje nista. Rangiramo unutar vidljivog. */
+  const ws = links.map(l => l.w).sort((a, b) => a - b);
+  const rank = w => ws.length < 2 ? 0.5 : ws.indexOf(w) / (ws.length - 1);
+  edge.select('line.vis')
+    .attr('stroke', d => isBridge(d) ? '#dadada' : '#3d3d3d')
+    .attr('stroke-width', d => (isBridge(d) ? 1.4 : 0.4) + rank(d.w) * 3.6)
+    .attr('stroke-opacity', d => {
+      const dim = isUnknown(byId(d.source.id || d.source)) || isUnknown(byId(d.target.id || d.target));
+      return dim ? 0.14 : isBridge(d) ? 0.95 : 0.35 + d.w * 0.55;
+    });
+  edge.select('text.lbl')
+    .attr('fill', '#8b6cef')
+    .text(d => Math.round(d.w * 100) + '%')
+    .attr('opacity', 0);
+
+  const before = new Set(gNodes.selectAll('g.node').data().map(d => d.id));
+  const node = gNodes.selectAll('g.node')
+    .data(nodes.filter(visible), d => d.id)
+    .join(enter => {
+      const g = enter.append('g')
+        .attr('class', 'node')
+        .attr('tabindex', 0)
+        .attr('role', 'button')
+        .attr('opacity', 0);
+      g.append('circle').attr('r', 0);
+      /* Prsten ima fill:none pa mu sredina ne hvata klik. Nevidljivi
+         disk preuzima interakciju i daje metu od najmanje 13px. */
+      g.append('circle').attr('class', 'hit').attr('fill', 'transparent');
+      g.append('text').attr('text-anchor', 'middle');
+      g.on('click', (e, d) => select(d))
+       .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); select(d); } })
+       .on('mouseenter', (e, d) => highlight(d))
+       .on('mouseleave', () => highlight(selected))
+       .call(d3.drag()
+         .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+         .on('drag',  (e, d) => { d.fx = e.x; d.fy = e.y; })
+         .on('end',   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+      return g;
+    });
+
+  /* Fiksni pod. S tekucim maksimumom je odznacavanje zadnje procitane
+     knjige rusilo MAX na 0.001, toplina je podivljala i cvorovi su se
+     stisnuli u hrpu. Pod od 0.8 drzi skalu stabilnom. */
+  MAX = Math.max(...nodes.map(score), 0.8);
+  topLabels = new Set(nodes.filter(n => !n.hub && !n.read && !isUnknown(n))
+    .sort((a, b) => score(b) - score(a)).slice(0, 3).map(n => n.id));
+  if (selected) topLabels.add(selected.id);
+  const t = motionOK ? 500 : 0;
+  /* Enter-selekcija je tocno skup novootkrivenih knjiga. */
+  let nNew = 0;
+  node.each(function(d){ d.__new = !before.has(d.id); if (d.__new) d.__i = nNew++; });
+  /* Na prvom crtanju su SVI cvorovi novi, pa bi kaskada od 90ms znacila
+     da zadnji dobije boju tek nakon 5s. Uvod ionako otkriva stupnjevito. */
+  const wait = d => (d.__new && motionOK && !firstDraw ? d.__i * 90 : 0);
+  node.filter(d => discovered.has(d.id) && !prevDiscovered.has(d.id) && !d.__new && !firstDraw)
+      .select('circle').attr('r', 4.5);   /* krene od velicine nepoznatog */
+  node.transition('pop').delay(wait).duration(300).attr('opacity', 1);
+
+  /* Bljesak: prsten koji se siri i gasi. Zivi unutar grupe cvora pa
+     prati njegov polozaj dok se simulacija jos slaze. */
+  /* Otkrivena knjiga je vec bila na ekranu kao nepoznati krug, pa
+     enter-selekcija ne pomaze - bljesak prati prijelaz nepoznato ->
+     poznato, a to je razlika dvaju skupova otkrivenog. */
+  const justFound = d => discovered.has(d.id) && !prevDiscovered.has(d.id);
+  if (motionOK && !firstDraw) node.filter(justFound).each(function(d){
+    d3.select(this).append('circle')
+      .attr('class', 'flash').attr('fill', 'none').attr('pointer-events', 'none')
+      .attr('stroke', col(d)).attr('stroke-width', 2)
+      .attr('r', radius(d)).attr('stroke-opacity', 0.9)
+      .transition().delay(wait(d)).duration(750).ease(d3.easeCubicOut)
+        .attr('r', radius(d) * 5).attr('stroke-opacity', 0).attr('stroke-width', 0.4)
+      .remove();
+  });
+
+  /* Nepoznati su prikaz, ne kontrola: ni klik, ni tab, ni hover. */
+  node.attr('pointer-events', d => isUnknown(d) ? 'none' : null)
+      .attr('tabindex', d => isUnknown(d) ? -1 : 0);
+  node.select('circle.hit')
+    .attr('r', d => Math.max(isUnknown(d) ? 4.5 : radius(d), 13))
+    .attr('pointer-events', d => isUnknown(d) ? 'none' : 'all');
+  node.select('circle')
+    .attr('pointer-events', 'none')
+    .attr('r', radius)
+    .attr('stroke', d => d.hub ? '#8e8e8e' : isUnknown(d) ? '#8e8e8e'
+          : d.read ? (isEntry(d) ? '#dadada' : 'none') : col(d))
+    /* Boja nosi ZANR. Status se cita iz ispune i crtkanja:
+       puna = procitano, slaba ispuna + crtkano = prijedlog,
+       bez ispune + sitno crtkano = nepoznato. */
+    .attr('stroke-dasharray', d => d.hub ? '4 4' : isUnknown(d) ? '2 3'
+          : d.read ? null : '3 3')
+    .transition('pop').delay(wait).duration(d => d.__new ? 420 : t)
+      .ease(d3.easeBackOut.overshoot(2.2))
+      .attr('r', d => isUnknown(d) ? 4.5 : isEntry(d) ? radius(d) + 2 : radius(d))
+      .attr('fill', d => d.hub || isUnknown(d) ? 'none'
+            : d.read ? hexa(col(d), 0.72)
+            : hexa(col(d), 0.05 + 0.45 * heat(d)))
+      .attr('stroke-width', d => d.hub ? 1 : isUnknown(d) ? 0.9
+            : d.read ? (isEntry(d) ? 2.2 : 0) : 1 + 2.4 * heat(d))
+      .attr('stroke-opacity', d => d.hub ? 0.5 : isUnknown(d) ? 0.3 : d.read ? 1 : 0.3 + 0.7 * heat(d));
+
+  node.select('text')
+    .attr('dy', d => radius(d) + 15)
+    .text(d => isUnknown(d) ? '' : d.title)
+    .transition().duration(t)
+      .transition('pop').delay(wait).duration(300)
+    .attr('opacity', d => labelOn(d) ? 1 : 0)
+    .attr('fill', d => d.hub ? '#8e8e8e' : null)
+    .style('letter-spacing', d => d.hub ? '.09em' : null);
+
+  const real = nodes.filter(d => !d.hub);
+  const found = real.filter(d => tier(d) !== 'horizon').length;
+  document.getElementById('found').textContent =
+    real.filter(d => discovered.has(d.id)).length + ' / ' + real.length;
+  document.getElementById('hidden').textContent =
+    real.filter(d => !discovered.has(d.id)).length;
+  const nb = links.filter(isBridge).length;
+  document.getElementById('bridges').textContent = bothOn() ? nb : '\u2014';
+  renderSidebar();
+
+  /* Redoslijed je bitan: d3 ponovno inicijalizira SVE sile na sim.nodes(),
+     pa veze moraju biti prazne dok se skup cvorova mijenja. */
+  sim.force('hub').links([]);
+  sim.nodes(nodes.filter(visible));
+  sim.force('hub').links(visHub);
+  sim.force('link').links(links);
+  sim.alpha(0.55).restart();
+  scaleLabels(d3.zoomTransform(svg.node()).k);
+  initOrbits();
+  prevDiscovered = new Set(discovered);
+  if (layout === 'ladder') applyLayout(0.3);
+}
+
+function renderPositions(){
+  const X = d => d.x + ox(d), Y = d => d.y + oy(d);
+  gLinks.selectAll('line')
+    .attr('x1', d => X(d.source)).attr('y1', d => Y(d.source))
+    .attr('x2', d => X(d.target)).attr('y2', d => Y(d.target));
+  gHub.selectAll('line')
+    .attr('x1', d => X(d.source)).attr('y1', d => Y(d.source))
+    .attr('x2', d => X(d.target)).attr('y2', d => Y(d.target));
+  gLinks.selectAll('text.lbl')
+    .attr('x', d => (X(d.source) + X(d.target)) / 2)
+    .attr('y', d => (Y(d.source) + Y(d.target)) / 2 - 4);
+  gNodes.selectAll('g.node').attr('transform', d => `translate(${X(d)},${Y(d)})`);
+}
+sim.on('tick', renderPositions);
+
+const touches = (l, d) => l.source.id === d.id || l.target.id === d.id;
+
+function highlight(d){
+  if (!d){
+    gLinks.selectAll('line.vis').attr('stroke', '#3d3d3d').attr('stroke-opacity', l => 0.35 + l.w * 0.55);
+    gLinks.selectAll('text.lbl').attr('opacity', 0);
+    gNodes.selectAll('g.node').attr('opacity', 1);
+    gNodes.selectAll('g.node').select('text').attr('opacity', n => labelOn(n) ? 1 : 0);
+    return;
+  }
+  const near = new Set([d.id]);
+  links.forEach(l => {
+    if (l.source.id === d.id) near.add(l.target.id);
+    if (l.target.id === d.id) near.add(l.source.id);
+  });
+  gLinks.selectAll('line.vis')
+    .attr('stroke', l => touches(l, d) ? '#8b6cef' : '#3d3d3d')
+    .attr('stroke-opacity', l => touches(l, d) ? 0.9 : 0.07);
+  /* Postotak se pojavljuje samo na bridovima odabranog cvora. */
+  gLinks.selectAll('text.lbl').attr('opacity', l => touches(l, d) ? 1 : 0);
+  gNodes.selectAll('g.node').attr('opacity', n => near.has(n.id) ? 1 : 0.2);
+  gNodes.selectAll('g.node').select('text')
+    .attr('opacity', n => near.has(n.id) && !isUnknown(n) ? 1 : (labelOn(n) ? 0.35 : 0));
+}
+
+/* Hover nad samim bridom: istakni njega i njegova dva cvora. */
+function hoverEdge(l){
+  if (!l){ highlight(selected); return; }
+  const ids = new Set([l.source.id, l.target.id]);
+  gLinks.selectAll('line.vis')
+    .attr('stroke', k => k === l ? '#8b6cef' : '#3d3d3d')
+    .attr('stroke-opacity', k => k === l ? 1 : 0.06);
+  gLinks.selectAll('text.lbl').attr('opacity', k => k === l ? 1 : 0);
+  gNodes.selectAll('g.node').attr('opacity', n => ids.has(n.id) ? 1 : 0.18);
+}
+
+/* --------------------------------------------------------------
+   Objasnjenje veze. Sve ispod je izvedeno iz tagova - dakle
+   opisuje PREKLAPANJE, ne znacenje. Rečenica koja objašnjava
+   znacenje dolazi iz modela; vidi PROMPT nize.
+-------------------------------------------------------------- */
+function selectEdge(l){
+  selected = null;
+  hoverEdge(l);
+  const a = byId(l.source.id), b = byId(l.target.id);
+  const A = new Set(a.tags), B = new Set(b.tags);
+  const shared = a.tags.filter(t => B.has(t));
+  const onlyA  = a.tags.filter(t => !B.has(t));
+  const onlyB  = b.tags.filter(t => !A.has(t));
+  const union  = new Set([...a.tags, ...b.tags]).size;
+
+  panel.innerHTML = CLOSE_BTN + `
+    <div class="pair"><span class="pct">${Math.round(l.w * 100)}%</span>
+      <span class="frac">${shared.length} od ${union} oznaka</span></div>
+    <p class="byline">${a.title} &nbsp;&middot;&nbsp; ${b.title}</p>
+
+    <div class="side">
+      <h4>Zajedni&#269;ko</h4>
+      <div class="tags">${shared.map(t => `<span class="tag">${t}</span>`).join('') || '<span class="empty">nema</span>'}</div>
+    </div>
+    <div class="side">
+      <h4>Samo &#8222;${a.title}&#8220;</h4>
+      <div class="tags">${onlyA.map(t => `<span class="tag off">${t}</span>`).join('') || '<span class="empty">nema</span>'}</div>
+    </div>
+    <div class="side">
+      <h4>Samo &#8222;${b.title}&#8220;</h4>
+      <div class="tags">${onlyB.map(t => `<span class="tag off">${t}</span>`).join('') || '<span class="empty">nema</span>'}</div>
+    </div>
+
+    <div class="slot">${explain(a, b, shared)}</div>
+
+    <div class="why" style="margin-top:16px">
+      <button class="openbtn" data-id="${a.id}">&#8594; ${a.title}</button>
+      <button class="openbtn" data-id="${b.id}">&#8594; ${b.title}</button>
+    </div>`;
+
+  panel.querySelectorAll('.openbtn').forEach(btn =>
+    btn.onclick = () => select(byId(btn.dataset.id)));
+  wirePanel();
+}
+
+/* Privremeno: recenica sklopljena iz tagova.
+   Zamjena je jedan poziv modelu, jednom po paru, pa u cache:
+
+   "Ove dvije knjige dijele oznake: {shared}. U dvije recenice objasni
+    sto ih stvarno povezuje na razini price ili iskustva citanja, i
+    po cemu se razlikuju. Bez spoilera. Odgovori na hrvatskom."
+*/
+function explain(a, b, shared){
+  if (!shared.length) return 'Nema preklapanja oznaka. Veza postoji samo kroz trece knjige.';
+  const list = shared.length === 1 ? shared[0]
+    : shared.slice(0, -1).join(', ') + ' i ' + shared[shared.length - 1];
+  return `Obje knjige nose oznake <b>${list}</b>. Postotak je Jaccard: zajedni&#269;ke oznake podijeljene s ukupnima. Ovdje bi stajala re&#269;enica modela o tome &#353;to ih zapravo povezuje.`;
+}
+
+/* ------------------------------------------------------------------
+   4. PANEL
+------------------------------------------------------------------ */
+const panel = document.getElementById('panel');
+const CLOSE_BTN = '<button class="pclose" id="pclose" title="Zatvori">&#10005;</button>';
+function wirePanel(){
+  const b = document.getElementById('pclose');
+  if (b) b.onclick = () => { selected = null; highlight(null); closePanel(); };
+}
+
+function select(d){
+  if (isUnknown(d)) return;
+  openPanel();
+  if (d.hub) return selectHub(d);
+  selected = d;
+  highlight(d);
+  renderSidebar();
+  const c = contributors(d);
+  const rows = c.rows.map(x => {
+    const pct = Math.round(x.w * 100);
+    return `<div class="why-row">
+      <div class="t"><span>${x.book.title}</span><span>${pct}%</span></div>
+      <div class="bar ${d.read ? 'read' : ''}"><i style="width:${Math.min(100, pct * 1.6)}%"></i></div>
+    </div>`;
+  }).join('') || '<p class="empty">Nema preklapanja ni s čim u mapi.</p>';
+
+  const heading = d.read ? 'Najbliže knjige u mapi'
+                : c.onHorizon ? 'Put do ove knjige' : 'Predloženo zbog';
+  const note = c.onHorizon
+    ? `<p class="empty" style="margin-bottom:14px">Još nije povezana ni s jednom pročitanom knjigom. Pročitaj nešto od ovoga ispod i podignut će se.</p>` : '';
+
+  /* Jedina informacija koja stvarno mijenja odluku: koliko ti se
+     mape otvara ako ovo procitas. Naslove NE odajemo - to bi ponistilo
+     cijelu mehaniku otkrivanja. */
+  let unlock = '';
+  if (!d.read){
+    const nb = PAIRS.filter(p => p.source === d.id || p.target === d.id)
+      .map(p => ({id: p.source === d.id ? p.target : p.source, w: p.w}))
+      .sort((x, y) => y.w - x.w).slice(0, K)
+      .map(x => byId(x.id)).filter(b => !discovered.has(b.id));
+    const cr = nb.filter(b => b.genre === 'crime').length;
+    unlock = nb.length
+      ? `<div class="unlock"><b>+${nb.length}</b> ${nb.length === 1 ? 'nova knjiga' : 'nove knjige'} ako ovo pročitaš
+         <span>${nb.length - cr} pustolovnih &middot; ${cr} krimi</span></div>`
+      : `<div class="unlock quiet">Ne otvara ništa novo &mdash; sve susjedno je već otkriveno.</div>`;
+  }
+
+  panel.innerHTML = CLOSE_BTN + `
+    <h2>${d.title}</h2>
+    <p class="byline">${d.author}</p>
+    ${unlock}
+    <div class="meta"><span>${d.pages} str.</span><span>${d.read ? 'pročitano' : c.onHorizon ? 'na horizontu' : 'prijedlog'}</span></div>
+    <div class="tags">${d.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    <div class="why">
+      <h3>${heading}</h3>
+      ${note}${rows}
+    </div>
+    <button class="mark ${d.read ? 'undo' : ''}" id="mk">
+      ${d.read ? 'Vrati u nepročitano' : 'Označi kao pročitano'}
+    </button>`;
+
+  wirePanel();
+  document.getElementById('mk').onclick = () => {
+    const beforeSet = new Set(discovered);
+    d.read = !d.read;
+    byId(d.id).read = d.read;
+    if (d.read){ byId(d.id).seq = ++readSeq; d.seq = byId(d.id).seq; }
+    else { byId(d.id).seq = null; d.seq = null; }
+    recomputeDiscovered();
+    rebuild();
+    refreshExplore();
+    nextQuip();
+    ceremony(d, beforeSet);
+    select(d);
+  };
+}
+
+function selectHub(h){
+  openPanel();
+  selected = null;
+  const mine = nodes.filter(n => !n.hub && n.genre === h.genre);
+  const readN = mine.filter(n => n.read).length;
+  const top = mine.filter(n => !n.read).map(n => ({n, s: score(n)}))
+                  .sort((a, b) => b.s - a.s).slice(0, 5);
+  gNodes.selectAll('g.node').attr('opacity', n => n.genre === h.genre ? 1 : 0.15);
+  gLinks.selectAll('line.vis').attr('stroke-opacity', 0.1);
+  gLinks.selectAll('text.lbl').attr('opacity', 0);
+
+  panel.innerHTML = CLOSE_BTN + `
+    <div class="pair"><span class="pct">${mine.length}</span><span class="frac">naslova</span></div>
+    <h2>${h.title}</h2>
+    <p class="byline">${readN} pro&#269;itano &middot; ${mine.length - readN} otvoreno</p>
+    <div class="slot">Sidro nije knjiga. Ne ulazi u izra&#269;un sli&#269;nosti i ne mo&#382;e biti preporuka &mdash; slu&#382;i samo da razdvoji mapu.</div>
+    <div class="reclist">
+      <h3 style="font-size:12px;font-weight:500;opacity:.6;margin:0 0 6px">Najbli&#382;e u ovom dijelu</h3>
+      ${top.map(r => `<button class="rec" data-id="${r.n.id}">
+        <span class="n">${r.n.title}</span>
+        <span class="s">${r.n.author} &middot; ${r.n.pages} str. &middot; ${r.s.toFixed(2)}</span>
+      </button>`).join('')}
+    </div>`;
+  panel.querySelectorAll('.rec').forEach(b => b.onclick = () => select(byId(b.dataset.id)));
+  wirePanel();
+}
+
+function emptyPanel(){
+  const recs = nodes.filter(n => !n.hub && !n.read && visible(n))
+    .map(n => ({n, s: score(n)}))
+    .sort((a, b) => b.s - a.s).slice(0, 5);
+
+  panel.innerHTML = CLOSE_BTN + `
+    <p class="empty"><strong>Klikni čvor.</strong>
+    Puni krugovi su pročitane knjige. Prijedlozi svijetle i primiču se sredini što bolje pristaju onome što čitaš. Blijedi obrisi na rubu su horizont — knjige do kojih još nemaš vezu. Označi nešto kao pročitano i gledaj tko se digne.</p>
+    <div class="reclist">
+      <h3 style="font-size:12px;font-weight:500;color:var(--ink-mute);margin:0 0 6px">Najjači prijedlozi sada</h3>
+      ${recs.map(r => `<button class="rec" data-id="${r.n.id}">
+        <span class="n">${r.n.title}</span>
+        <span class="s">${r.n.author} · ${r.n.pages} str. · ${r.s.toFixed(2)}</span>
+      </button>`).join('')}
+    </div>`;
+
+  panel.querySelectorAll('.rec').forEach(b =>
+    b.onclick = () => select(byId(b.dataset.id)));
+  wirePanel();
+}
+
+svg.on('click', e => {
+  if (e.target.tagName === 'svg'){ selected = null; highlight(null); closePanel(); }
+});
+
+/* Klik u prazno zatvara plocu umjesto da je vraca na pocetni sadrzaj.
+   Platno se time prosiri, pa se srediste i raspored moraju preracunati. */
+function closePanel(){ panel.classList.add('closed'); remeasure(); }
+function openPanel(){
+  if (!panel.classList.contains('closed')) return;
+  panel.classList.remove('closed'); remeasure();
+}
+function remeasure(){
+  /* Osvjezavamo SAMO dimenzije platna (za zoom i "namjesti pogled").
+     CX/CY se NE diraju: sile im vise ciljeve, pa bi pomak sredista za
+     150px povukao cijelu mapu na svaki klik u prazno. Recentriranje
+     ostaje samo na stvarnu promjenu velicine prozora. */
+  W = canvasEl.clientWidth; H = canvasEl.clientHeight;
+}
+
+/* ------------------------------------------------------------------
+   5. KONTROLE
+------------------------------------------------------------------ */
+document.getElementById('kk').oninput = e => {
+  K = +e.target.value;
+  document.getElementById('kV').textContent = K;
+  recomputeDiscovered();
+  rebuild();
+};
+document.getElementById('thr').oninput = e => {
+  threshold = +e.target.value;
+  document.getElementById('thrV').textContent = threshold.toFixed(2);
+  recomputeDiscovered();
+  rebuild();
+};
+document.getElementById('pg').oninput = e => {
+  maxPages = +e.target.value;
+  document.getElementById('pgV').textContent = maxPages >= 700 ? 'sve' : maxPages;
+  rebuild();
+  if (!selected || !visible(selected)) { selected = null; emptyPanel(); }
+};
+window.onresize = () => {
+  W = canvasEl.clientWidth; H = canvasEl.clientHeight;
+  CX = W / 2; CY = H / 2;
+  applyLayout();
+};
+
+/* --- sklopive sekcije, kao Obsidianove postavke grafa --- */
+document.querySelectorAll('[data-sect]').forEach(h =>
+  h.onclick = () => h.parentElement.classList.toggle('closed'));
+
+/* --- lijeva traka --- */
+function renderSidebar(){
+  const groups = [
+    ['Pročitano',  nodes.filter(n => discovered.has(n.id) && tier(n) === 'read')],
+    ['Prijedlozi', nodes.filter(n => discovered.has(n.id) && tier(n) === 'suggested').sort((a,b) => score(b) - score(a))],
+    ['Horizont',   nodes.filter(n => discovered.has(n.id) && tier(n) === 'horizon')]
+  ];
+  const openState = {};
+  document.querySelectorAll('.sb-group').forEach(g =>
+    openState[g.dataset.g] = g.classList.contains('closed'));
+
+  document.getElementById('sblist').innerHTML = groups.map(([name, list]) => `
+    <div class="sb-group ${openState[name] ? 'closed' : ''}" data-g="${name}">
+      <div class="gh"><span class="chev">&#9662;</span> ${name}<span class="count">${list.length}</span></div>
+      ${list.map(b => `<button class="gi ${name === 'Horizont' ? 'dim' : ''} ${selected && selected.id === b.id ? 'on' : ''}" data-id="${b.id}">${b.title}</button>`).join('')}
+    </div>`).join('');
+
+  document.querySelectorAll('.sb-group .gh').forEach(h =>
+    h.onclick = () => h.parentElement.classList.toggle('closed'));
+  document.querySelectorAll('.gi').forEach(b =>
+    b.onclick = () => select(byId(b.dataset.id)));
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ selected = null; highlight(null); emptyPanel(); }
+});
+
+
+/* --------------------------------------------------------------
+   SKOK. Suprotnost preporuci: trazi knjigu koja je DALEKO od svega
+   procitanog, ali je cvoriste u svom dijelu mape. To je jedina
+   obrana od toga da ti alat s vremenom suzi ukus.
+-------------------------------------------------------------- */
+let explores = 0;
+function exploreLeft(){
+  return Math.floor(BOOKS.filter(b => b.read).length / 3) - explores;
+}
+function refreshExplore(){
+  const n = exploreLeft(), b = document.getElementById('jump');
+  b.disabled = n < 1;
+  b.textContent = n < 1 ? 'Istraži novu (još ' + (3 - BOOKS.filter(x => x.read).length % 3) + ' knjige)'
+                        : 'Istraži novu (' + n + ')';
+}
+
+let statusT = null;
+function setStatus(txt, ms){
+  const el = document.getElementById('status');
+  el.innerHTML = txt;
+  el.classList.add('on');
+  clearTimeout(statusT);
+  if (ms) statusT = setTimeout(() => el.classList.remove('on'), ms);
+}
+
+function ceremony(src, before){
+  const fresh = [...discovered].filter(id => !before.has(id)).map(byId);
+  const lost = [...before].filter(id => !discovered.has(id)).length;
+
+  if (lost && !fresh.length){
+    /* Odznacavanje suzava mapu - to nije "nista novo", nego gubitak. */
+    setStatus(`Mapa se suzila za <b>${lost}</b>`, 1900);
+    return;
+  }
+  setStatus('Pretražujem susjedstvo&hellip;');
+  setTimeout(() => setStatus(fresh.length
+    ? `Pronađeno <b>${fresh.length}</b> ${fresh.length === 1 ? 'nova knjiga' : 'nove knjige'}`
+    : 'Ništa novo u susjedstvu', 1900), 700);
+
+  if (!motionOK) return;
+  fresh.forEach((t, i) => {
+    if (src.x == null || t.x == null) return;
+    gLinks.append('circle')
+      .attr('r', 3).attr('fill', col(t)).attr('pointer-events', 'none')
+      .attr('cx', src.x).attr('cy', src.y).attr('opacity', 0.95)
+      .transition().delay(560 + i * 90).duration(520).ease(d3.easeCubicInOut)
+        .attr('cx', () => t.x).attr('cy', () => t.y)
+      .transition().duration(180).attr('opacity', 0).attr('r', 8)
+      .remove();
+  });
+}
+
+function jump(){
+  if (exploreLeft() < 1) return;
+  /* Trazi medu NEOTKRIVENIMA: cvoriste u svom dijelu mape, daleko od
+     svega procitanog. Bez ovoga bi otkrivanje po slicnosti zatvorilo
+     korisnika u prvi zanr koji je dotaknuo. */
+  const deg = {};
+  PAIRS.forEach(p => { deg[p.source] = (deg[p.source] || 0) + 1; deg[p.target] = (deg[p.target] || 0) + 1; });
+  const cand = nodes.filter(n => !n.hub && !discovered.has(n.id) && genreOn[n.genre] && n.pages <= maxPages);
+  if (!cand.length) return;
+  const best = cand.map(n => ({n, v: ((deg[n.id] || 0) + 1) / (1 + 8 * score(n))}))
+                   .sort((a, b) => b.v - a.v)[0].n;
+  const beforeSet = new Set(discovered);
+  forced.add(best.id);
+  explores++;
+  recomputeDiscovered();
+  rebuild();
+  refreshExplore();
+  nextQuip();
+  ceremony(byId(best.id), beforeSet);
+  setTimeout(() => select(byId(best.id)), 240);
+}
+document.getElementById('jump').onclick = jump;
+
+
+document.getElementById('gdrift').onchange = e => {
+  driftOn = e.target.checked;
+  if (!driftOn){ orbT = 0; nodes.forEach(n => n.or = 0); renderPositions(); }
+  else initOrbits();
+};
+['adv', 'crime'].forEach(g => {
+  document.getElementById(g === 'adv' ? 'gadv' : 'gcrime').onchange = e => {
+    genreOn[g] = e.target.checked;
+    /* Kad je upaljen samo jedan zanr, nema ga se od cega odvajati. */
+    sim.force('genre', d3.forceX(d => bothOn() ? CX + (d.genre === 'adv' ? -230 : 230) : CX));
+    selected = null;
+    rebuild();
+    applyLayout();
+    highlight(null);
+    emptyPanel();
+  };
+});
+
+/* --------------------------------------------------------------
+   UVOD. Nista se stvarno ne ucitava - podaci su u datoteci - pa je
+   ovo cista predstava. Zato: ide samo pri prvom otvaranju, preskace
+   se bilo kojim klikom ili tipkom, i preskace se sama kad korisnik
+   trazi smanjeno gibanje.
+-------------------------------------------------------------- */
+let introRunning = false;
+let firstDraw = true;
+let prevDiscovered = new Set();
+const STEP = 13;
+
+function intro(){
+  /* Simulacija se slegne PRIJE prikaza, inace cvorovi iskacu u letu. */
+  for (let i = 0; i < 400; i++) sim.tick();
+  renderPositions();
+  fit(0);
+  if (!motionOK) return;
+
+  const sel = gNodes.selectAll('g.node');
+  const order = sel.data().slice().sort((a, b) => b.y - a.y);   /* odozdo prema gore */
+  const rank = new Map(order.map((d, i) => [d.id, i]));
+  const total = order.length * STEP;
+  const del = d => rank.get(d.id) * STEP;
+  introRunning = true;
+
+  sel.attr('opacity', 0);
+  sel.select('circle').attr('r', 0);
+  gLinks.selectAll('g.edge').attr('opacity', 0);
+  gBands.attr('opacity', 0);
+
+  sel.transition('intro').delay(del).duration(240).attr('opacity', 1);
+  sel.select('circle').transition('intro').delay(del).duration(340)
+     .ease(d3.easeBackOut.overshoot(2.2)).attr('r', radius);
+  gLinks.selectAll('g.edge').transition('intro')
+     .delay(d => Math.max(rank.get(d.source.id) || 0, rank.get(d.target.id) || 0) * STEP + 130)
+     .duration(420).attr('opacity', 1);
+  gBands.transition('intro').delay(total * 0.45).duration(600).attr('opacity', 1);
+  setTimeout(() => { introRunning = false; }, total + 1200);
+}
+
+function endIntro(){
+  if (!introRunning) return;
+  introRunning = false;
+  const sel = gNodes.selectAll('g.node');
+  sel.interrupt('intro').attr('opacity', 1);
+  sel.select('circle').interrupt('intro').attr('r', radius);
+  gLinks.selectAll('g.edge').interrupt('intro').attr('opacity', 1);
+  gBands.interrupt('intro').attr('opacity', 1);
+}
+['pointerdown', 'keydown', 'wheel'].forEach(ev =>
+  document.addEventListener(ev, endIntro, {passive: true}));
+
+/* --------------------------------------------------------------
+   Jedna recenica u traci. Dio je izracunat iz stvarnog stanja mape,
+   dio je opaska. Mijenja se na klik i pri svakoj promjeni stanja.
+-------------------------------------------------------------- */
+const QUIPS = [
+  () => 'Najjača veza u cijeloj mapi je Moby Dick ↔ Rebecca, 60%. Obje spominju more i tu svaka sličnost prestaje.',
+  () => 'Isprekidani krugovi su stvarne knjige. Skriva ti se naslov, ne postojanje.',
+  () => `Otkrio si ${discovered.size} od ${BOOKS.length}. Ostalo je ${BOOKS.length - discovered.size} knjiga koje mapa zna, a ti ne.`,
+  () => {
+    const p = BOOKS.filter(b => b.read).reduce((s, b) => s + b.pages, 0);
+    return `Pročitano ${p} stranica u ovoj mapi. Oko ${(p / 250).toFixed(1)} prosječna romana.`;
+  },
+  () => {
+    const c = {};
+    BOOKS.filter(b => b.read).forEach(b => b.tags.forEach(t => c[t] = (c[t] || 0) + 1));
+    const top = Object.entries(c).sort((a, b) => b[1] - a[1])[0];
+    return top ? `Oznaka koja se najčešće ponavlja u tvojim pročitanima: „${top[0]}". Mapa te gura upravo onamo.`
+               : 'Ništa još nije pročitano, pa mapa nagađa. Označi nešto i prestat će.';
+  },
+  () => {
+    const deg = {};
+    PAIRS.forEach(p => { if (p.w >= 0.2){ deg[p.source] = (deg[p.source]||0)+1; deg[p.target] = (deg[p.target]||0)+1; } });
+    const lone = BOOKS.map(b => ({b, d: deg[b.id] || 0})).sort((a, b) => a.d - b.d)[0];
+    return `Najusamljenija knjiga u mapi je „${lone.b.title}" — ${lone.d} veza. Netko je mora pročitati prvi.`;
+  },
+  () => {
+    const r = BOOKS.filter(b => b.read);
+    const cr = r.filter(b => b.genre === 'crime').length;
+    return `Od pročitanih: ${r.length - cr} pustolovnih, ${cr} krimića. Sve ostalo je pretpostavka.`;
+  },
+  () => {
+    const s = BOOKS.filter(b => !b.read && discovered.has(b.id)).sort((a, b) => a.pages - b.pages)[0];
+    return s ? `Najkraća otkrivena knjiga koju nisi pročitao: „${s.title}", ${s.pages} str. Nema izgovora.` : 'Sve otkriveno je pročitano. Pritisni Istraži.';
+  },
+  () => 'Jaccard ne zna što znači riječ „more". Ti znaš. To je zasad tvoja jedina prednost nad ovim grafom.',
+  () => 'Ovaj graf ne zna je li knjiga dobra. Zna samo je li slična. To nikad neće biti isto.',
+  () => 'Kratka knjiga nije lakša knjiga. Kafka stane u 70 stranica i ostane godinama.',
+  () => 'Ako te preporuka nije iznenadila, nije ništa preporučila.',
+  () => 'Za police s nekupljenim vremenom postoji japanska riječ: tsundoku. To je dijagnoza, ne lijek.',
+  () => 'Označiš li knjigu pročitanom bez čitanja, jedino biće koje si prevario je ovaj graf.',
+  () => 'Prosjek je 12 knjiga godišnje. Prosjeci su, kao i obično, uvredljivi na obje strane.',
+  () => 'Ubojica je gotovo uvijek onaj lik koji se pojavio prerano i bez razloga.',
+  () => 'Svaka mapa ukusa s vremenom postane mjehur. Zato gumb Istraži i postoji.',
+  () => 'Nijedan algoritam ne zna hoće li ti se knjiga svidjeti. Ni ti to ne znaš prije tridesete stranice.'
+];
+let lastQuip = -1;
+function nextQuip(){
+  let i;
+  do { i = Math.floor(Math.random() * QUIPS.length); } while (i === lastQuip && QUIPS.length > 1);
+  lastQuip = i;
+  const el = document.getElementById('quipT');
+  let txt;
+  try { txt = QUIPS[i](); } catch(e){ txt = QUIPS[8](); }
+  if (!motionOK){ el.textContent = txt; return; }
+  el.classList.add('swap');
+  setTimeout(() => { el.textContent = txt; el.classList.remove('swap'); }, 180);
+}
+const card = document.getElementById('quipCard');
+const openBtn = document.getElementById('quipOpen');
+document.getElementById('quipNext').onclick = nextQuip;
+document.getElementById('quipClose').onclick = () => {
+  card.classList.add('hidden'); openBtn.classList.remove('hidden');
+};
+openBtn.onclick = () => {
+  card.classList.remove('hidden'); openBtn.classList.add('hidden'); nextQuip();
+};
+
+nextQuip();
+rebuild();
+firstDraw = false;
+applyLayout();
+emptyPanel();
+refreshExplore();
+intro();
+</script>
+</body>
+</html>

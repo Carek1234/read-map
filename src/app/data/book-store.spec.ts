@@ -1,12 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { Book } from '../domain/book.model';
 import { BookStore } from './book-store';
+import { EmbeddingService } from './embedding.service';
 import { InMemoryPersistence } from './in-memory-persistence';
 import { STATE_PERSISTENCE } from './persistence';
 
+// Fake embedder — ne skida model; vraća fiksni vektor.
+const fakeEmbeddings = { embed: async () => new Float32Array([0.1, 0.2, 0.3]) };
+
 function setup(persistence = new InMemoryPersistence()) {
   TestBed.configureTestingModule({
-    providers: [{ provide: STATE_PERSISTENCE, useValue: persistence }],
+    providers: [
+      { provide: STATE_PERSISTENCE, useValue: persistence },
+      { provide: EmbeddingService, useValue: fakeEmbeddings },
+    ],
   });
   return { store: TestBed.inject(BookStore), persistence };
 }
@@ -14,11 +21,12 @@ function setup(persistence = new InMemoryPersistence()) {
 describe('BookStore', () => {
   afterEach(() => TestBed.resetTestingModule());
 
-  it('seed: 202 knjige, 4 pročitane, 20 otkrivenih (K=5)', () => {
+  it('seed: 202 knjige, 4 pročitane; discovered uključuje sve pročitane', () => {
     const { store } = setup();
     expect(store.books().length).toBe(202);
     expect(store.readIds().size).toBe(4);
-    expect(store.discovered().size).toBe(20);
+    expect(store.discovered().size).toBeGreaterThanOrEqual(store.readIds().size);
+    for (const id of store.readIds()) expect(store.discovered().has(id)).toBe(true);
   });
 
   it('toggleRead preračuna computed lanac', () => {
@@ -56,24 +64,31 @@ describe('BookStore', () => {
     expect(zov.heat).toBe(1);
   });
 
-  it('addBook doda novu knjigu i uđe u computed lanac', () => {
+  it('addBook doda novu knjigu i uđe u computed lanac', async () => {
     const { store } = setup();
     const book: Book = { id: '/works/OLx', title: 'Nova', author: 'A', pages: 100, tags: ['x'], genre: 'adv' };
-    expect(store.addBook(book)).toBe(true);
+    expect(await store.addBook(book)).toBe(true);
     expect(store.books().length).toBe(203);
     expect(store.entries().some((e) => e.book.id === '/works/OLx')).toBe(true);
   });
 
-  it('addBook odbija duplikat po id-u', () => {
+  it('addBook embedda dodanu knjigu (dobije vec)', async () => {
+    const { store } = setup();
+    await store.addBook({ id: '/works/OLv', title: 'V', author: 'A', pages: 1, tags: ['x'], genre: 'adv' });
+    const added = store.books().find((b) => b.id === '/works/OLv');
+    expect(added?.vec).toBeInstanceOf(Float32Array);
+  });
+
+  it('addBook odbija duplikat po id-u', async () => {
     const { store } = setup();
     const dup: Book = { id: 'zov', title: 'Dupli', author: 'A', pages: 1, tags: [], genre: 'adv' };
-    expect(store.addBook(dup)).toBe(false); // 'zov' je već u seedu
+    expect(await store.addBook(dup)).toBe(false); // 'zov' je već u seedu
     expect(store.books().length).toBe(202);
   });
 
   it('addBook persistira userBooks', async () => {
     const { store, persistence } = setup();
-    store.addBook({ id: '/works/OLy', title: 'Y', author: 'A', pages: 1, tags: [], genre: 'crime' });
+    await store.addBook({ id: '/works/OLy', title: 'Y', author: 'A', pages: 1, tags: [], genre: 'crime' });
     const stored = await persistence.get<Book[]>('userBooks');
     expect(stored?.map((b) => b.id)).toContain('/works/OLy');
   });

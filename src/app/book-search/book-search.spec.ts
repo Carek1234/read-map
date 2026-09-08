@@ -1,13 +1,16 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BookSearch } from './book-search';
 import { BookStore } from '../data/book-store';
 import { OpenLibraryClient } from '../data/open-library.client';
 import { STATE_PERSISTENCE } from '../data/persistence';
 import { InMemoryPersistence } from '../data/in-memory-persistence';
+import { EmbeddingService } from '../data/embedding.service';
 
 const fakeOl = {
   search: async () => [{ key: '/works/OLnew', title: 'New Book', author: 'A', subjects: ['x'] }],
 };
+const fakeEmbeddings = { loading: signal(false), embed: async () => new Float32Array([0.1, 0.2, 0.3]) };
 
 describe('BookSearch', () => {
   it('prikaže rezultate i doda knjigu u store', async () => {
@@ -15,6 +18,7 @@ describe('BookSearch', () => {
       providers: [
         { provide: OpenLibraryClient, useValue: fakeOl },
         { provide: STATE_PERSISTENCE, useValue: new InMemoryPersistence() },
+        { provide: EmbeddingService, useValue: fakeEmbeddings },
       ],
     });
     const fixture = TestBed.createComponent(BookSearch);
@@ -30,6 +34,7 @@ describe('BookSearch', () => {
 
     const before = store.books().length;
     (el.querySelector('button.add') as HTMLButtonElement).click();
+    await fixture.whenStable(); // addBook je async (embedda knjigu)
     expect(store.books().length).toBe(before + 1);
     expect(store.books().some((b) => b.id === '/works/OLnew')).toBe(true);
   });

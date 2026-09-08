@@ -72,6 +72,7 @@ src/app/
 | Unit tests    | Vitest + jsdom (`@angular/build:unit-test`) |
 | Visualisation | d3 v7 (Phase 3)                         |
 | Persistence   | IndexedDB (Phase 1)                     |
+| Embeddings    | Transformers.js — local multilingual sentence-transformer (Phase 4) |
 | Runtime       | Node.js 22                              |
 
 ## Getting started
@@ -115,6 +116,35 @@ npm test
   would silently change scores and the discovery curve.
 - **The heat floor is load-bearing.** See test #3 above.
 
+## Embeddings (Phase 4)
+
+Similarity starts as tag overlap (Jaccard) — a known-weak signal (the notorious
+_Moby Dick ↔ Rebecca_ 60% false match). It is replaced by embedding cosine
+(`VectorCosine`) computed with a local, multilingual sentence-transformer
+(Transformers.js) — no API key, no service, no per-user cost, so the app can be
+deployed as a static site and still embed books in the visitor's browser.
+
+Generate the seed vectors once (downloads the model to a local cache the first
+time):
+
+```bash
+npm run embed:seed        # writes src/app/data/vectors.json (202 books)
+```
+
+The app auto-detects `vectors.json`: empty → Jaccard, populated → `VectorCosine`.
+The absolute cosine sits high with this model, so what matters is the ranking, not
+the number — verify a false match is out of the neighbourhood:
+
+```bash
+npm run check:pair -- moby rebecca   # 49% absolute, but Rebecca ranks ~33rd of 201
+npm run check:pair -- zov ocnjak     # 85% (same author, wilderness)
+```
+
+Next: run the **same model** in the browser (an `EmbeddingService`) so books added
+from Open Library get a vector in the same space at add time — the piece that
+makes discovery work for a deployed, multi-user page. Until then, added books
+fall back to Jaccard.
+
 ## Roadmap
 
 | Phase | Deliverable                                          | Status      |
@@ -123,7 +153,7 @@ npm test
 | 1     | IndexedDB + read/unread, ugly list (no graph yet)    | ✅ Done     |
 | 2     | Add books via Open Library                           | ✅ Done     |
 | 3     | Graph component: ladder layout, discovery, zoom      | Planned     |
-| 4     | Embedding vectors + `VectorCosine`                   | Planned     |
+| 4     | Embedding vectors + `VectorCosine`                   | 🔶 Seed done; browser embed for added books next |
 | 5     | Discovery ceremony, orbits, PWA, deploy              | Planned     |
 
 Phase 1 deliberately precedes the graph: a week of real use decides whether the

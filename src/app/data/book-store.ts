@@ -3,7 +3,8 @@ import { Book } from '../domain/book.model';
 import { buildPairs, adjacency } from '../domain/pairs';
 import { discoverFrom, frontierOf } from '../domain/discovery';
 import { Tier, heat, maxScore, tier } from '../domain/scoring';
-import { loadSeed } from './book-data';
+import { bookEmbedText, loadSeed, seedSimilarity } from './book-data';
+import { EmbeddingService } from './embedding.service';
 import { STATE_PERSISTENCE } from './persistence';
 
 const READ_IDS_KEY = 'readIds';
@@ -25,6 +26,7 @@ export interface BookEntry {
 @Injectable({ providedIn: 'root' })
 export class BookStore {
   private readonly persistence = inject(STATE_PERSISTENCE);
+  private readonly embeddings = inject(EmbeddingService);
   private readonly seed = loadSeed();
 
   // --- stanje (jedini izvori istine) ---
@@ -35,7 +37,7 @@ export class BookStore {
   readonly threshold = signal(0.2);
 
   // --- izvedeno (memoizirano, lijeno) ---
-  readonly pairs = computed(() => buildPairs(this.books()));
+  readonly pairs = computed(() => buildPairs(this.books(), seedSimilarity));
   readonly adj = computed(() => adjacency(this.pairs()));
   readonly discovered = computed(() => discoverFrom(this.adj(), this.readIds(), this.k()));
   readonly frontier = computed(() => frontierOf(this.pairs(), this.discovered(), this.threshold()));
@@ -63,10 +65,19 @@ export class BookStore {
     if (readIds) this.readIds.set(new Set(readIds)); // hidracija ne sprema natrag
   }
 
-  /** Dodaj knjigu ako je nema (dedup po id-u). Vrati je li dodana. */
-  addBook(book: Book): boolean {
+  /**
+   * Dodaj knjigu ako je nema (dedup po id-u). Embedda je (isti prostor kao seed);
+   * ako embedding zakaže, sprema bez vektora (fallback na TagJaccard).
+   */
+  async addBook(book: Book): Promise<boolean> {
     if (this.books().some((b) => b.id === book.id)) return false;
-    this.userBooks.update((list) => [...list, book]);
+    let stored = book;
+    try {
+      stored = { ...book, vec: await this.embeddings.embed(bookEmbedText(book)) };
+    } catch {
+      // ostavi bez vec — poveže se preko tagova dok embedding ne uspije
+    }
+    this.userBooks.update((list) => [...list, stored]);
     void this.persistence.set(USER_BOOKS_KEY, this.userBooks());
     return true;
   }

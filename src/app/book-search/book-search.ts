@@ -3,6 +3,7 @@ import { Genre } from '../domain/book.model';
 import { BookStore } from '../data/book-store';
 import { OlSearchResult, OpenLibraryClient } from '../data/open-library.client';
 import { olToBook } from '../data/open-library.mapper';
+import { EmbeddingService } from '../data/embedding.service';
 
 @Component({
   selector: 'app-book-search',
@@ -16,6 +17,10 @@ import { olToBook } from '../data/open-library.mapper';
       </select>
       <button class="search" (click)="search(q.value)">Search</button>
     </div>
+
+    @if (embeddings.loading()) {
+      <p class="hint">Embedding… (prvi put skida model, ~120 MB)</p>
+    }
 
     @if (loading()) {
       <p class="hint">Searching…</p>
@@ -57,6 +62,7 @@ import { olToBook } from '../data/open-library.mapper';
 export class BookSearch {
   private readonly ol = inject(OpenLibraryClient);
   private readonly store = inject(BookStore);
+  protected readonly embeddings = inject(EmbeddingService);
 
   protected readonly results = signal<OlSearchResult[]>([]);
   protected readonly loading = signal(false);
@@ -78,7 +84,7 @@ export class BookSearch {
     }
   }
 
-  protected add(result: OlSearchResult): void {
-    this.store.addBook(olToBook(result, this.genre()));
+  protected async add(result: OlSearchResult): Promise<void> {
+    await this.store.addBook(olToBook(result, this.genre()));
   }
 }

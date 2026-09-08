@@ -11,6 +11,7 @@ Nepročitano i nepovezano se ne crta.
 - **esbuild** (`@angular/build`) — build
 - **d3 v7** — crtanje grafa (dolazi u fazi 3)
 - **IndexedDB** — spremanje podataka u browseru (faza 1)
+- **Transformers.js** — lokalni AI model za embeddinge, bez ključa (faza 4)
 - **Node.js 22**
 
 ## Naredbe
@@ -56,5 +57,6 @@ mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 - **Faza 0:** logika + testovi.
 - **Faza 1:** lista knjiga, oznaka pročitano, spremanje u browser (preživi refresh).
 - **Faza 2:** dodavanje knjiga iz Open Libraryja (pretraga + spremanje).
+- **Faza 4:** embeddingi (lokalni model, Transformers.js) — seed knjige povezane po značenju, ne po tagovima. `npm run embed:seed`.
 
-Sve zeleno (34 testa). Graf još ne postoji — dolazi u fazi 3.
+Sve zeleno (39 testa). Graf još ne postoji — dolazi u fazi 3.

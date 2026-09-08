@@ -32,10 +32,13 @@ src/app/domain/     čista logika, BEZ Angulara — ovdje živi sva matematika
   scoring.ts          koliko je knjiga "topla" (preporučena)
   discovery.ts        što se otkriva kad nešto pročitaš
   *.spec.ts           testovi
-src/app/data/       podaci i granica prema domeni
+src/app/data/       podaci, spremanje i stanje
   books.json          202 knjige
   raw-book.model.ts   vanjski oblik zapisa (ima `read`)
   book-data.ts        pretvara vanjski oblik u domenski Book + readIds
+  persistence.ts      sučelje za spremanje (IndexedDB ili memorija)
+  book-store.ts       stanje aplikacije (signali) — sve teče odavde
+src/app/book-list/  lista knjiga (dvije komponente: pametna + glupa)
 HANDOFF.md          duga specifikacija (sve odluke i brojke)
 mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 ```
@@ -48,4 +51,7 @@ mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 
 ## Što je gotovo
 
-Faza 0: logika + testovi (12/12 zeleno). Grafičko sučelje još ne postoji.
+- **Faza 0:** logika + testovi.
+- **Faza 1:** lista knjiga, oznaka pročitano, spremanje u browser (preživi refresh).
+
+Sve zeleno (23 testa). Graf još ne postoji — dolazi u fazi 3.

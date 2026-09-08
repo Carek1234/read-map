@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Book } from '../domain/book.model';
 import { BookStore } from './book-store';
 import { InMemoryPersistence } from './in-memory-persistence';
 import { STATE_PERSISTENCE } from './persistence';
@@ -53,5 +54,37 @@ describe('BookStore', () => {
     const zov = store.entries().find((e) => e.book.id === 'zov')!;
     expect(zov.read).toBe(true);
     expect(zov.heat).toBe(1);
+  });
+
+  it('addBook doda novu knjigu i uđe u computed lanac', () => {
+    const { store } = setup();
+    const book: Book = { id: '/works/OLx', title: 'Nova', author: 'A', pages: 100, tags: ['x'], genre: 'adv' };
+    expect(store.addBook(book)).toBe(true);
+    expect(store.books().length).toBe(203);
+    expect(store.entries().some((e) => e.book.id === '/works/OLx')).toBe(true);
+  });
+
+  it('addBook odbija duplikat po id-u', () => {
+    const { store } = setup();
+    const dup: Book = { id: 'zov', title: 'Dupli', author: 'A', pages: 1, tags: [], genre: 'adv' };
+    expect(store.addBook(dup)).toBe(false); // 'zov' je već u seedu
+    expect(store.books().length).toBe(202);
+  });
+
+  it('addBook persistira userBooks', async () => {
+    const { store, persistence } = setup();
+    store.addBook({ id: '/works/OLy', title: 'Y', author: 'A', pages: 1, tags: [], genre: 'crime' });
+    const stored = await persistence.get<Book[]>('userBooks');
+    expect(stored?.map((b) => b.id)).toContain('/works/OLy');
+  });
+
+  it('hidrira userBooks pri init()', async () => {
+    const persistence = new InMemoryPersistence();
+    await persistence.set('userBooks', [
+      { id: '/works/OLz', title: 'Z', author: 'A', pages: 1, tags: [], genre: 'adv' },
+    ]);
+    const { store } = setup(persistence);
+    await store.init();
+    expect(store.books().some((b) => b.id === '/works/OLz')).toBe(true);
   });
 });

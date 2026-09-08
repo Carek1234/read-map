@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { BookStore } from './data/book-store';
 import { BookList } from './book-list/book-list';
+import { BookSearch } from './book-search/book-search';
 
 @Component({
   selector: 'app-root',
-  imports: [BookList],
+  imports: [BookList, BookSearch],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
   styleUrl: './app.css',

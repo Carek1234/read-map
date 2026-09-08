@@ -7,6 +7,7 @@ import { loadSeed } from './book-data';
 import { STATE_PERSISTENCE } from './persistence';
 
 const READ_IDS_KEY = 'readIds';
+const USER_BOOKS_KEY = 'userBooks';
 
 /** Jedan zapis za listu: knjiga + izvedeno stanje. */
 export interface BookEntry {
@@ -27,7 +28,8 @@ export class BookStore {
   private readonly seed = loadSeed();
 
   // --- stanje (jedini izvori istine) ---
-  readonly books = signal<Book[]>(this.seed.books);
+  readonly userBooks = signal<Book[]>([]); // knjige dodane iz Open Libraryja
+  readonly books = computed(() => [...this.seed.books, ...this.userBooks()]);
   readonly readIds = signal<ReadonlySet<string>>(this.seed.readIds);
   readonly k = signal(5);
   readonly threshold = signal(0.2);
@@ -53,8 +55,20 @@ export class BookStore {
 
   /** Učitaj spremljeno stanje. Zove se jednom na startu (app initializer). */
   async init(): Promise<void> {
-    const stored = await this.persistence.get<string[]>(READ_IDS_KEY);
-    if (stored) this.readIds.set(new Set(stored)); // hidracija ne sprema natrag
+    const [books, readIds] = await Promise.all([
+      this.persistence.get<Book[]>(USER_BOOKS_KEY),
+      this.persistence.get<string[]>(READ_IDS_KEY),
+    ]);
+    if (books) this.userBooks.set(books);
+    if (readIds) this.readIds.set(new Set(readIds)); // hidracija ne sprema natrag
+  }
+
+  /** Dodaj knjigu ako je nema (dedup po id-u). Vrati je li dodana. */
+  addBook(book: Book): boolean {
+    if (this.books().some((b) => b.id === book.id)) return false;
+    this.userBooks.update((list) => [...list, book]);
+    void this.persistence.set(USER_BOOKS_KEY, this.userBooks());
+    return true;
   }
 
   /** Označi/odznači pročitano. Novi Set → signal detektira promjenu. */
@@ -62,7 +76,7 @@ export class BookStore {
     const next = new Set(this.readIds());
     next.has(id) ? next.delete(id) : next.add(id);
     this.readIds.set(next);
-    void this.persist();
+    void this.persistence.set(READ_IDS_KEY, [...next]);
   }
 
   setK(value: number): void {
@@ -71,9 +85,5 @@ export class BookStore {
 
   setThreshold(value: number): void {
     this.threshold.set(value);
-  }
-
-  private persist(): Promise<void> {
-    return this.persistence.set(READ_IDS_KEY, [...this.readIds()]);
   }
 }

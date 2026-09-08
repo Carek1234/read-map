@@ -40,6 +40,6 @@ export class BookListItem {
 
   protected readonly label = computed(() => {
     const t = this.entry().tier;
-    return t === 'suggested' ? 'suggested' : t === 'horizon' ? 'horizon' : '';
+    return t === 'read' ? '' : t;
   });
 }

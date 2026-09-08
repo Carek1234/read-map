@@ -38,7 +38,9 @@ src/app/data/       podaci, spremanje i stanje
   book-data.ts        pretvara vanjski oblik u domenski Book + readIds
   persistence.ts      sučelje za spremanje (IndexedDB ili memorija)
   book-store.ts       stanje aplikacije (signali) — sve teče odavde
-src/app/book-list/  lista knjiga (dvije komponente: pametna + glupa)
+  open-library.*      pretraga Open Libraryja + pretvorba u našu knjigu
+src/app/book-list/    lista knjiga (dvije komponente: pametna + glupa)
+src/app/book-search/  tražilica i dodavanje iz Open Libraryja
 HANDOFF.md          duga specifikacija (sve odluke i brojke)
 mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 ```
@@ -53,5 +55,6 @@ mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 
 - **Faza 0:** logika + testovi.
 - **Faza 1:** lista knjiga, oznaka pročitano, spremanje u browser (preživi refresh).
+- **Faza 2:** dodavanje knjiga iz Open Libraryja (pretraga + spremanje).
 
-Sve zeleno (23 testa). Graf još ne postoji — dolazi u fazi 3.
+Sve zeleno (34 testa). Graf još ne postoji — dolazi u fazi 3.

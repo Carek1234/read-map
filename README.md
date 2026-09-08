@@ -4,9 +4,9 @@ A personal reading map. Every book you finish reveals its _K_ most similar
 neighbours; everything undiscovered stays hidden. The more you read, the more of
 the map you can see.
 
-> **Status:** Phase 1 complete — the domain core, a persistent read/unread list
-> (IndexedDB), and the signal-based store. The graph UI is not built yet
-> (see [Roadmap](#roadmap)).
+> **Status:** Phase 2 complete — the domain core, a persistent read/unread list
+> (IndexedDB), the signal-based store, and adding books from Open Library. The
+> graph UI is not built yet (see [Roadmap](#roadmap)).
 
 ---
 
@@ -50,7 +50,10 @@ src/app/
     book-data.ts     loadBooks: raw → domain Book + initial readIds
     persistence.ts   StatePersistence port (IndexedDB / in-memory)
     book-store.ts    signals + computed; the single source of truth
+    open-library.client.ts  HttpClient search against Open Library
+    open-library.mapper.ts   OL result → domain Book
   book-list/       container + presentational list components
+  book-search/     Open Library search + add-to-library
   graph/           imperative d3 renderer (Phase 3)
   shell/           top bar, settings, side panel, book card               (Phase 3)
 ```
@@ -118,7 +121,7 @@ npm test
 | ----- | ---------------------------------------------------- | ----------- |
 | 0     | Skeleton, domain port, unit tests                    | ✅ Done     |
 | 1     | IndexedDB + read/unread, ugly list (no graph yet)    | ✅ Done     |
-| 2     | Add books via Open Library                           | Planned     |
+| 2     | Add books via Open Library                           | ✅ Done     |
 | 3     | Graph component: ladder layout, discovery, zoom      | Planned     |
 | 4     | Embedding vectors + `VectorCosine`                   | Planned     |
 | 5     | Discovery ceremony, orbits, PWA, deploy              | Planned     |

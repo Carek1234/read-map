@@ -4,9 +4,11 @@ A personal reading map. Every book you finish reveals its _K_ most similar
 neighbours; everything undiscovered stays hidden. The more you read, the more of
 the map you can see.
 
-> **Status:** Phase 2 complete — the domain core, a persistent read/unread list
-> (IndexedDB), the signal-based store, and adding books from Open Library. The
-> graph UI is not built yet (see [Roadmap](#roadmap)).
+> **Status:** Phases 0–2 and 4 complete — the domain core, a persistent
+> read/unread list (IndexedDB), the signal-based store, adding books from Open
+> Library, and semantic similarity via embeddings (a local model, run offline for
+> the seed and in the browser for added books). A demo/own-library split lets the
+> app be deployed statically. The graph UI (Phase 3) is not built yet.
 
 ---
 
@@ -140,10 +142,15 @@ npm run check:pair -- moby rebecca   # 49% absolute, but Rebecca ranks ~33rd of 
 npm run check:pair -- zov ocnjak     # 85% (same author, wilderness)
 ```
 
-Next: run the **same model** in the browser (an `EmbeddingService`) so books added
-from Open Library get a vector in the same space at add time — the piece that
-makes discovery work for a deployed, multi-user page. Until then, added books
-fall back to Jaccard.
+The **same model** also runs in the browser (`EmbeddingService`, lazy-loaded) so
+books added from Open Library get a vector in the same space at add time — this is
+what makes discovery work on a deployed, multi-user page with no backend. If the
+in-browser embed fails, the book is still added and falls back to Jaccard.
+
+**Demo vs. your own.** A visitor opens into the seed as a demo (instant, no model
+download; toggles there are ephemeral). "Start your own" switches to an empty
+personal map stored in their browser (IndexedDB); added books are embedded on the
+fly.
 
 ## Roadmap
 
@@ -153,7 +160,7 @@ fall back to Jaccard.
 | 1     | IndexedDB + read/unread, ugly list (no graph yet)    | ✅ Done     |
 | 2     | Add books via Open Library                           | ✅ Done     |
 | 3     | Graph component: ladder layout, discovery, zoom      | Planned     |
-| 4     | Embedding vectors + `VectorCosine`                   | 🔶 Seed done; browser embed for added books next |
+| 4     | Embedding vectors + `VectorCosine` (seed + in-browser) | ✅ Done     |
 | 5     | Discovery ceremony, orbits, PWA, deploy              | Planned     |
 
 Phase 1 deliberately precedes the graph: a week of real use decides whether the

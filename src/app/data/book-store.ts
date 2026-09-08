@@ -7,8 +7,11 @@ import { bookEmbedText, loadSeed, seedSimilarity } from './book-data';
 import { EmbeddingService } from './embedding.service';
 import { STATE_PERSISTENCE } from './persistence';
 
-const READ_IDS_KEY = 'readIds';
-const USER_BOOKS_KEY = 'userBooks';
+const MODE_KEY = 'mode';
+const OWN_BOOKS_KEY = 'ownBooks';
+const OWN_READS_KEY = 'ownReads';
+
+export type Mode = 'demo' | 'own';
 
 /** Jedan zapis za listu: knjiga + izvedeno stanje. */
 export interface BookEntry {
@@ -20,8 +23,7 @@ export interface BookEntry {
 
 /**
  * Srce aplikacije: stanje kao signali, sve izvedeno kao `computed`.
- * Promijeniš `readIds` → `discovered`/`frontier`/`entries` se sami preračunaju.
- * Ništa se ne poziva ručno — bug "zaboravih recompute" postaje nemoguć (HANDOFF §3).
+ * Dva izvora: demo (autorova biblioteka, seed) i own (posjetiteljeva mapa).
  */
 @Injectable({ providedIn: 'root' })
 export class BookStore {
@@ -29,14 +31,21 @@ export class BookStore {
   private readonly embeddings = inject(EmbeddingService);
   private readonly seed = loadSeed();
 
-  // --- stanje (jedini izvori istine) ---
-  readonly userBooks = signal<Book[]>([]); // knjige dodane iz Open Libraryja
-  readonly books = computed(() => [...this.seed.books, ...this.userBooks()]);
-  readonly readIds = signal<ReadonlySet<string>>(this.seed.readIds);
+  /** 'demo' = autorova biblioteka (showcase); 'own' = posjetiteljeva mapa. */
+  readonly mode = signal<Mode>('demo');
+
+  // demo: seed + ephemeral pročitane (tinkeranje u demou se NE sprema)
+  private readonly demoReads = signal<ReadonlySet<string>>(this.seed.readIds);
+  // own: posjetiteljeve knjige i pročitane (persistirano)
+  readonly ownBooks = signal<Book[]>([]);
+  private readonly ownReads = signal<ReadonlySet<string>>(new Set());
+
   readonly k = signal(5);
   readonly threshold = signal(0.2);
 
-  // --- izvedeno (memoizirano, lijeno) ---
+  readonly books = computed(() => (this.mode() === 'demo' ? this.seed.books : this.ownBooks()));
+  readonly readIds = computed(() => (this.mode() === 'demo' ? this.demoReads() : this.ownReads()));
+
   readonly pairs = computed(() => buildPairs(this.books(), seedSimilarity));
   readonly adj = computed(() => adjacency(this.pairs()));
   readonly discovered = computed(() => discoverFrom(this.adj(), this.readIds(), this.k()));
@@ -55,46 +64,68 @@ export class BookStore {
     }));
   });
 
-  /** Učitaj spremljeno stanje. Zove se jednom na startu (app initializer). */
   async init(): Promise<void> {
-    const [books, readIds] = await Promise.all([
-      this.persistence.get<Book[]>(USER_BOOKS_KEY),
-      this.persistence.get<string[]>(READ_IDS_KEY),
+    const [mode, ownBooks, ownReads] = await Promise.all([
+      this.persistence.get<Mode>(MODE_KEY),
+      this.persistence.get<Book[]>(OWN_BOOKS_KEY),
+      this.persistence.get<string[]>(OWN_READS_KEY),
     ]);
-    if (books) this.userBooks.set(books);
-    if (readIds) this.readIds.set(new Set(readIds)); // hidracija ne sprema natrag
+    if (ownBooks) this.ownBooks.set(ownBooks);
+    if (ownReads) this.ownReads.set(new Set(ownReads));
+    if (mode) this.mode.set(mode);
   }
 
-  /**
-   * Dodaj knjigu ako je nema (dedup po id-u). Embedda je (isti prostor kao seed);
-   * ako embedding zakaže, sprema bez vektora (fallback na TagJaccard).
-   */
+  /** Prebaci na vlastitu mapu (prazno platno). */
+  startOwn(): void {
+    this.setMode('own');
+  }
+
+  /** Vrati se na demo (autorovu biblioteku). */
+  viewDemo(): void {
+    this.setMode('demo');
+  }
+
+  toggleRead(id: string): void {
+    if (this.mode() === 'demo') {
+      this.demoReads.set(this.toggled(this.demoReads(), id)); // ephemeral
+      return;
+    }
+    const next = this.toggled(this.ownReads(), id);
+    this.ownReads.set(next);
+    void this.persistence.set(OWN_READS_KEY, [...next]);
+  }
+
+  /** Dodaj knjigu u VLASTITU mapu (embedda je). Dodavanje uvijek znači "own". */
   async addBook(book: Book): Promise<boolean> {
-    if (this.books().some((b) => b.id === book.id)) return false;
+    if (this.mode() === 'demo') this.startOwn();
+    if (this.ownBooks().some((b) => b.id === book.id)) return false;
     let stored = book;
     try {
       stored = { ...book, vec: await this.embeddings.embed(bookEmbedText(book)) };
     } catch {
-      // ostavi bez vec — poveže se preko tagova dok embedding ne uspije
+      // fallback: bez vec, poveže se preko tagova
     }
-    this.userBooks.update((list) => [...list, stored]);
-    void this.persistence.set(USER_BOOKS_KEY, this.userBooks());
+    this.ownBooks.update((list) => [...list, stored]);
+    void this.persistence.set(OWN_BOOKS_KEY, this.ownBooks());
     return true;
   }
 
-  /** Označi/odznači pročitano. Novi Set → signal detektira promjenu. */
-  toggleRead(id: string): void {
-    const next = new Set(this.readIds());
+  setK(v: number): void {
+    this.k.set(v);
+  }
+
+  setThreshold(v: number): void {
+    this.threshold.set(v);
+  }
+
+  private setMode(m: Mode): void {
+    this.mode.set(m);
+    void this.persistence.set(MODE_KEY, m);
+  }
+
+  private toggled(set: ReadonlySet<string>, id: string): Set<string> {
+    const next = new Set(set);
     next.has(id) ? next.delete(id) : next.add(id);
-    this.readIds.set(next);
-    void this.persistence.set(READ_IDS_KEY, [...next]);
-  }
-
-  setK(value: number): void {
-    this.k.set(value);
-  }
-
-  setThreshold(value: number): void {
-    this.threshold.set(value);
+    return next;
   }
 }

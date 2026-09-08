@@ -32,10 +32,9 @@ describe('BookSearch', () => {
     fixture.detectChanges();
     expect(el.textContent).toContain('New Book');
 
-    const before = store.books().length;
     (el.querySelector('button.add') as HTMLButtonElement).click();
     await fixture.whenStable(); // addBook je async (embedda knjigu)
-    expect(store.books().length).toBe(before + 1);
+    expect(store.mode()).toBe('own'); // dodavanje pokrene vlastitu mapu
     expect(store.books().some((b) => b.id === '/works/OLnew')).toBe(true);
   });
 });

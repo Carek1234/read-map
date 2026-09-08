@@ -57,6 +57,6 @@ mapa-knjiga-v2.html prototip u jednom fajlu (uzor, ne kopiramo ga)
 - **Faza 0:** logika + testovi.
 - **Faza 1:** lista knjiga, oznaka pročitano, spremanje u browser (preživi refresh).
 - **Faza 2:** dodavanje knjiga iz Open Libraryja (pretraga + spremanje).
-- **Faza 4:** embeddingi (lokalni model, Transformers.js) — seed knjige povezane po značenju, ne po tagovima. `npm run embed:seed`.
+- **Faza 4:** embeddingi (lokalni model) — knjige povezane po značenju, ne po tagovima. Seed se peče offline (`npm run embed:seed`), dodane knjige se embeddaju u browseru. Demo / "Start your own" način rada.
 
 Sve zeleno (39 testa). Graf još ne postoji — dolazi u fazi 3.

@@ -4,7 +4,23 @@
     read {{ readCount() }} · discovered {{ discoveredCount() }} / {{ total() }}
   </p>
 </header>
+
+<div class="modebar">
+  @if (store.mode() === 'demo') {
+    <span>Demo library — explore it, or</span>
+    <button (click)="store.startOwn()">Start your own</button>
+  } @else {
+    <span>Your library</span>
+    <button (click)="store.viewDemo()">View demo</button>
+  }
+</div>
+
 <main>
-  <app-book-search />
+  @if (store.mode() === 'own') {
+    <app-book-search />
+    @if (total() === 0) {
+      <p class="empty">Search above to add your first book.</p>
+    }
+  }
   <app-book-list />
 </main>

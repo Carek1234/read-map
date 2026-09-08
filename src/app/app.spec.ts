@@ -22,4 +22,18 @@ describe('App', () => {
     expect(el.querySelector('h1')?.textContent).toContain('read-map');
     expect(el.querySelector('app-book-list')).toBeTruthy();
   });
+
+  it('demo skriva search; "Start your own" ga pokaže', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('app-book-search')).toBeNull(); // demo: nema searcha
+
+    const startBtn = [...el.querySelectorAll('button')].find((b) =>
+      b.textContent?.includes('Start your own'),
+    )!;
+    startBtn.click();
+    fixture.detectChanges();
+    expect(el.querySelector('app-book-search')).toBeTruthy(); // own: search se pojavi
+  });
 });
